@@ -1,15 +1,23 @@
 site_name: DK Tech Base
-site_url: https://dkang919.github.io/my-tech-base/
-repo_url: https://github.com/dkang919/my-tech-base
+site_url: https://dkang919.github.io/tech-base/
+repo_url: https://github.com/dkang919/tech-base
 repo_name: GitHub
 
 theme:
   name: material
   palette: 
-    scheme: default # or slate (다크모드)
+    - scheme: default # 라이트 모드
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate # 다크 모드
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
-    - navigation.tabs # 상단 탭 메뉴
+    - navigation.tabs # 상단 탭 메뉴 (프로페셔널한 느낌)
     - navigation.sections
+    - navigation.top # 위로 가기 버튼
     - content.code.copy # 코드 복사 버튼
 
 markdown_extensions:
@@ -18,4 +26,4 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
-  - admonition # 참고/경고 박스 사용 가능
+  - admonition # 팁/경고 박스 사용 가능
