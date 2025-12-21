@@ -10,7 +10,22 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate # 다크 모드
+    - scheme: slate # 다크 모드theme:
+  name: material
+  # (기존 palette 설정 유지하되, 아래 속성 추가)
+  palette: 
+    - scheme: default
+      primary: teal   # 추천: teal, indigo, slate, black
+      accent: purple  # 버튼 등 포인트 컬러
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -26,9 +41,27 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
-  - admonition # 팁/경고 박스 사용 가능
+  - admonition            # [필수] 박스 기능
+  - pymdownx.details      # [필수] 접었다 폈다 하는 기능
+  - pymdownx.arithmatex:  # [필수] 수식 기능 ($E=mc^2$)
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - Home: index.md
   - Projects:
       - Canada IEC Monitor: projects/iec-monitor.md
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/dkang919
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/danielkdw/
+    - icon: fontawesome/solid/envelope
+      link: mailto:kangd1990@gmail.com
