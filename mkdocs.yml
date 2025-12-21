@@ -27,3 +27,8 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - admonition # 팁/경고 박스 사용 가능
+
+nav:
+  - Home: index.md
+  - Projects:
+      - Canada IEC Monitor: projects/iec-monitor.md
