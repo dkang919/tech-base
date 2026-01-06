@@ -2,38 +2,38 @@ name: Update BigQuery Data Chart
 
 on:
   schedule:
-    - cron: '0 2 * * 0'   # 캐나다 동부(EST) 토요일 저녁 9시 = UTC 일요일 오전 2시
-  workflow_dispatch:      # 수동 실행 버튼 (테스트용)
+    # UTC 일요일 오전 2시 (캐나다 EST 토요일 오후 9시)
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # 수동 실행 버튼 활성화
 
 jobs:
   update-chart:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
       - name: Install dependencies
-              run: |
-                pip install -r requirements.txt
-
-      - name: Run Analysis
-        env:
-          # 시크릿에 저장한 키를 임시 파일로 변환하여 인증에 사용
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          echo "$GCP_SA_KEY" > gcp-key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          python scripts/generate_charts.py
-          rm gcp-key.json # 보안을 위해 파일 삭제
+          pip install -r requirements.txt
 
-      - name: Commit and Push
+      - name: Generate Chart
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        # scripts 폴더 안에 있는 파이썬 파일 실행
+        run: python scripts/generate_charts.py
+
+      - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/assets/charts/category_price_trend.html
-          git commit -m "📊 Auto-update: Latest BigQuery charts" || echo "No changes to commit"
+          git add docs/images/ram_price_trend.png
+          # 변경사항이 있을 때만 커밋 (에러 방지)
+          git commit -m "Auto-update: RAM price chart" || exit 0
           git push
