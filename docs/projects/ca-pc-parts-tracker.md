@@ -13,6 +13,7 @@
 * **Analysis:** Pandas, Scikit-learn
 * **Visualization:** Plotly (Interative Charts)
 
-## 📊 Data Pipeline (To-be)
-!!! note "진행 계획"
-    현재 데이터 수집 스크립트 작성 중이며, 곧 실시간 가격 변동 그래프를 아래에 추가할 예정입니다.
+
+
+## 📊 RAM Price Trend
+![RAM Price Trend](../images/ram_price_trend.png)
