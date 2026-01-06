@@ -27,13 +27,13 @@ jobs:
       - name: Create credentials file
         shell: bash
         env:
-          GCP_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GCP_KEY: ${{ secrets.GCP_SA_KEY }}
         run: echo "$GCP_KEY" > gcp-key.json
 
       - name: Generate Chart
         env:
           # [수정됨] 파이썬에게 파일 경로를 전달
-          GOOGLE_APPLICATION_CREDENTIALS: gcp-key.json
+          GCP_SA_KEY: gcp-key.json
         # scripts 폴더 안에 있는 파이썬 파일 실행
         run: python scripts/generate_charts.py
 
