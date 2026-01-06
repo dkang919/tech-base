@@ -23,11 +23,24 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      # [수정됨] Secret 내용을 꺼내서 임시 json 파일 생성
+      - name: Create credentials file
+        shell: bash
+        env:
+          GCP_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: echo "$GCP_KEY" > gcp-key.json
+
       - name: Generate Chart
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          # [수정됨] 파이썬에게 파일 경로를 전달
+          GOOGLE_APPLICATION_CREDENTIALS: gcp-key.json
         # scripts 폴더 안에 있는 파이썬 파일 실행
         run: python scripts/generate_charts.py
+
+      # [추가됨] 보안을 위해 사용 후 즉시 삭제 (성공/실패 무관하게 실행)
+      - name: Delete credentials file
+        if: always()
+        run: rm gcp-key.json
 
       - name: Commit and Push changes
         run: |
