@@ -108,13 +108,25 @@
     const badge = document.getElementById('category-badge');
     const counter = document.getElementById('counter');
 
+    // 🔀 셔플 알고리즘 (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // 두 요소를 맞바꿈
+        }
+    }
+
     async function loadQuizData() {
         try {
-            // data 폴더의 ml_quiz.json을 가져옴
+            // 상위 폴더로 나가서 data 찾기
             const response = await fetch('../data/ml_quiz.json');
             if (!response.ok) throw new Error("File not found");
             
             quizData = await response.json();
+            
+            // [핵심] 데이터 로드 직후에 무작위로 섞어버림
+            shuffleArray(quizData);
+            
             renderCard();
         } catch (error) {
             console.error("Load failed:", error);
@@ -131,7 +143,7 @@
             const item = quizData[currentIdx];
             qText.innerHTML = item.q;
             aText.innerHTML = item.a;
-            badge.innerText = item.category; // 카테고리 표시
+            badge.innerText = item.category;
             counter.innerText = `${currentIdx + 1} / ${quizData.length}`;
         }, 200);
     }
@@ -143,9 +155,12 @@
             currentIdx++;
             renderCard();
         } else {
-            alert("Great job! Restarting from the beginning.");
-            currentIdx = 0;
-            renderCard();
+            // 끝까지 가면 다시 섞어서 처음부터 시작 (무한 루프)
+            if(confirm("모든 문제를 다 풀었습니다! 다시 섞어서 시작할까요?")) {
+                shuffleArray(quizData);
+                currentIdx = 0;
+                renderCard();
+            }
         }
     }
 
