@@ -1,102 +1,212 @@
 [
     {
-        "category": "Logistic Regression",
-        "q": "What is the main difference between Linear Regression and Logistic Regression?",
-        "a": "Linear Regression predicts a <strong>continuous</strong> value (e.g., house prices), whereas Logistic Regression predicts the <strong>probability</strong> of an event belonging to a categorical class (e.g., spam or not spam)."
+        "category": "1. Regression",
+        "q": "What are the key assumptions of Linear Regression?",
+        "a": "1. <strong>Linearity</strong> between X and Y.<br>2. <strong>Independence</strong> of errors.<br>3. <strong>Homoscedasticity</strong> (constant variance of errors).<br>4. <strong>Normality</strong> of error distribution.<br>5. No multicollinearity."
     },
     {
-        "category": "Logistic Regression",
-        "q": "Which activation function is used to map predictions to probabilities between 0 and 1?",
-        "a": "The <strong>Sigmoid</strong> function.<br>Formula: S(x) = 1 / (1 + e^-x)"
+        "category": "1. Regression",
+        "q": "What is R-squared (Coefficient of Determination)?",
+        "a": "It represents the <strong>proportion of variance</strong> in the dependent variable that is explained by the independent variables. It ranges from 0 to 1."
     },
     {
-        "category": "Logistic Regression",
-        "q": "Why is Mean Squared Error (MSE) generally not used as a cost function for Logistic Regression?",
-        "a": "Because using MSE with the Sigmoid function results in a <strong>non-convex</strong> cost function with many local minima, making it difficult for Gradient Descent to find the global minimum. <strong>Log Loss</strong> is used instead."
+        "category": "1. Regression",
+        "q": "What is the difference between R-squared and Adjusted R-squared?",
+        "a": "R-squared always increases as you add more features, even irrelevant ones. <strong>Adjusted R-squared</strong> penalizes adding useless features, providing a more accurate measure for multiple regression."
     },
     {
-        "category": "Logistic Regression",
-        "q": "How do you handle multiclass classification using Logistic Regression?",
-        "a": "You can use the <strong>One-vs-Rest (OvR)</strong> approach or use <strong>Softmax Regression</strong> (Multinomial Logistic Regression) to handle multiple classes."
+        "category": "1. Regression",
+        "q": "Explain the difference between L1 (Lasso) and L2 (Ridge) regularization.",
+        "a": "L1 adds the <strong>absolute value</strong> of magnitude of coefficient as penalty term, leading to feature selection (sparse solution). L2 adds the <strong>squared magnitude</strong>, shrinking coefficients but not to zero."
     },
     {
-        "category": "Logistic Regression",
-        "q": "What is the 'decision boundary' in Logistic Regression?",
-        "a": "It is a hyperplane that separates the classes. Typically, if the predicted probability is > 0.5, it is classified as positive; otherwise, it is negative."
+        "category": "1. Regression",
+        "q": "When would you use Lasso (L1) over Ridge (L2)?",
+        "a": "When you suspect that many features are irrelevant. Lasso can drive coefficients to <strong>zero</strong>, effectively performing <strong>feature selection</strong>."
     },
     {
-        "category": "Random Forest",
-        "q": "What is the core concept behind Random Forest?",
-        "a": "It is an <strong>Ensemble</strong> method that uses <strong>Bagging (Bootstrap Aggregating)</strong>. It builds multiple decision trees on random subsets of data and features, then averages their predictions to reduce variance."
+        "category": "1. Regression",
+        "q": "What is Multicollinearity and why is it a problem?",
+        "a": "It occurs when independent variables are highly correlated. It makes it difficult to determine the individual effect of each feature and makes the coefficients <strong>unstable</strong> with high variance."
     },
     {
-        "category": "Random Forest",
-        "q": "How does Random Forest reduce overfitting compared to a single Decision Tree?",
-        "a": "A single tree tends to have high variance (overfitting). By averaging multiple deep trees trained on different subsets of data, Random Forest <strong>reduces the overall variance</strong> without significantly increasing bias."
+        "category": "1. Regression",
+        "q": "How can you detect Multicollinearity?",
+        "a": "By using the <strong>Variance Inflation Factor (VIF)</strong>. A VIF value greater than 5 or 10 indicates high multicollinearity."
     },
     {
-        "category": "Random Forest",
-        "q": "What is OOB (Out-Of-Bag) Error?",
-        "a": "It is an internal validation metric. Since each tree is trained on a bootstrap sample (approx. 2/3 of data), the remaining 1/3 (OOB data) is used to evaluate the tree's performance without a separate validation set."
+        "category": "2. Logistic Regression",
+        "q": "Why is accuracy not a good metric for imbalanced datasets?",
+        "a": "In a highly imbalanced dataset (e.g., 99% negative), a model predicting only 'negative' will have 99% accuracy but zero predictive power. Metrics like <strong>Precision, Recall, and F1-Score</strong> are better."
     },
     {
-        "category": "Random Forest",
-        "q": "Why is 'Feature Randomness' important in Random Forest?",
-        "a": "By forcing each split to consider only a random subset of features, it ensures the trees are <strong>decorrelated</strong>. This prevents a single dominant feature from making all trees identical."
+        "category": "2. Logistic Regression",
+        "q": "What is the ROC Curve and AUC?",
+        "a": "ROC plots <strong>True Positive Rate (Recall)</strong> vs <strong>False Positive Rate</strong> at various thresholds. AUC (Area Under Curve) measures the ability of the classifier to distinguish between classes."
     },
     {
-        "category": "Random Forest",
-        "q": "Can Random Forest be used for both classification and regression?",
-        "a": "Yes. For classification, it uses <strong>majority voting</strong>. For regression, it takes the <strong>average</strong> of the outputs from all trees."
+        "category": "2. Logistic Regression",
+        "q": "What is the interpretability of Logistic Regression coefficients?",
+        "a": "The coefficients represent the change in the <strong>log-odds</strong> of the outcome for a one-unit increase in the predictor variable."
     },
     {
-        "category": "XGBoost",
-        "q": "How does XGBoost differ from Random Forest?",
-        "a": "XGBoost uses <strong>Boosting</strong> (sequential training), where each new tree corrects the errors of the previous ones. Random Forest uses <strong>Bagging</strong> (parallel training)."
+        "category": "3. Decision Tree",
+        "q": "What is Entropy in the context of Decision Trees?",
+        "a": "Entropy measures the <strong>impurity</strong> or randomness in a dataset. A lower entropy indicates a purer node (more homogenous class distribution)."
     },
     {
-        "category": "XGBoost",
-        "q": "What makes XGBoost faster than traditional Gradient Boosting?",
-        "a": "It uses <strong>parallel processing</strong> for tree construction (specifically finding the best split), hardware optimization (cache awareness), and handles sparse data efficiently."
+        "category": "3. Decision Tree",
+        "q": "What is Information Gain?",
+        "a": "It is the <strong>reduction in entropy</strong> achieved by splitting a dataset on a specific attribute. The tree chooses the split with the highest Information Gain."
     },
     {
-        "category": "XGBoost",
-        "q": "How does XGBoost handle missing values?",
-        "a": "It learns a <strong>default direction</strong> for missing values during training. It tries putting missing values to the left and right, choosing the direction that minimizes the loss."
+        "category": "3. Decision Tree",
+        "q": "What is Gini Impurity?",
+        "a": "Another measure of impurity used in CART algorithms. It measures the probability of incorrectly classifying a randomly chosen element if it were randomly labeled according to the distribution of labels in the node."
     },
     {
-        "category": "XGBoost",
-        "q": "What regularization techniques does XGBoost use?",
-        "a": "It includes <strong>L1 (Lasso)</strong> and <strong>L2 (Ridge)</strong> regularization to penalize complex models and prevent overfitting."
+        "category": "3. Decision Tree",
+        "q": "How do you prevent overfitting in Decision Trees?",
+        "a": "By <strong>Pruning</strong> (pre-pruning or post-pruning), setting a maximum depth, setting a minimum number of samples per leaf, or using ensemble methods."
     },
     {
-        "category": "XGBoost",
-        "q": "Why is XGBoost considered a 'Gradient' Boosting algorithm?",
-        "a": "Because it minimizes the loss function by adding new models that predict the <strong>gradients (residuals)</strong> of the loss function with respect to the previous prediction."
+        "category": "4. Random Forest",
+        "q": "What is Bootstrap Aggregating (Bagging)?",
+        "a": "It involves creating multiple subsets of data from the training set with replacement (Bootstrap) and training a model on each subset. The final prediction is an average (Aggregating)."
     },
     {
-        "category": "ANN",
+        "category": "4. Random Forest",
+        "q": "Why does Random Forest generally outperform a single Decision Tree?",
+        "a": "It reduces <strong>variance</strong>. By averaging many trees that are decorrelated, the model becomes more robust to noise and less prone to overfitting."
+    },
+    {
+        "category": "4. Random Forest",
+        "q": "What is the role of 'mtry' (number of features tried at each split)?",
+        "a": "It controls the diversity of the trees. A smaller mtry makes trees more diverse (less correlated) but potentially individually weaker. It is a key hyperparameter to tune."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "How does Gradient Boosting differ from AdaBoost?",
+        "a": "AdaBoost updates weights of data points (misclassified points get higher weight). Gradient Boosting fits new models to the <strong>residual errors</strong> (gradients) of the previous models."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "What is the 'Learning Rate' in Boosting?",
+        "a": "It scales the contribution of each new tree. A lower learning rate requires more trees but generally leads to better generalization."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "Why is XGBoost so popular in Kaggle competitions?",
+        "a": "Speed and performance. It uses system optimization (parallelization, cache awareness) and algorithmic enhancements (regularization, handling missing values, tree pruning)."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What is the main objective of a Support Vector Machine (SVM)?",
+        "a": "To find the <strong>hyperplane</strong> that maximizes the <strong>margin</strong> between two classes."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What are Support Vectors?",
+        "a": "They are the data points <strong>closest</strong> to the hyperplane. They are the only points that influence the position and orientation of the hyperplane."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What is the 'Kernel Trick'?",
+        "a": "It allows SVM to solve non-linear problems by mapping data into a <strong>higher-dimensional space</strong> where it becomes linearly separable, without computing the coordinates explicitly."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What does the 'C' parameter control in SVM?",
+        "a": "It controls the trade-off between maximizing the margin and minimizing classification errors. High C tries to classify all training examples correctly (low bias, high variance). Low C allows more errors for a wider margin."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What does the 'Gamma' parameter control in RBF Kernel?",
+        "a": "It defines how far the influence of a single training example reaches. High Gamma means only close points are considered (complex boundary, overfitting risk). Low Gamma means far points are considered."
+    },
+    {
+        "category": "7. PCA",
+        "q": "What is the goal of Principal Component Analysis (PCA)?",
+        "a": "To reduce dimensionality while preserving as much <strong>variance</strong> (information) as possible by transforming variables into a new set of orthogonal variables (Principal Components)."
+    },
+    {
+        "category": "7. PCA",
+        "q": "Why is data standardization (scaling) important before PCA?",
+        "a": "Because PCA is sensitive to the scale of features. It maximizes variance, so variables with large scales will dominate the principal components if not standardized."
+    },
+    {
+        "category": "7. PCA",
+        "q": "What are Eigenvalues and Eigenvectors in PCA?",
+        "a": "Eigenvectors represent the <strong>direction</strong> of the axes (Principal Components). Eigenvalues represent the <strong>magnitude of variance</strong> explained by that component."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is an Activation Function and why is it needed?",
+        "a": "It introduces <strong>non-linearity</strong> to the network. Without it, a neural network, no matter how deep, would be equivalent to a single linear regression model."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "Explain the Softmax function.",
+        "a": "It is used in the output layer for multi-class classification. It converts raw scores (logits) into probabilities that sum up to 1."
+    },
+    {
+        "category": "8. Neural Networks",
         "q": "What is Backpropagation?",
-        "a": "It is the algorithm used to update weights. It calculates the gradient of the loss function with respect to each weight by applying the <strong>Chain Rule</strong> backward from the output layer to the input layer."
+        "a": "The algorithm to compute the <strong>gradient of the loss function</strong> with respect to the weights. It propagates the error backward from output to input using the Chain Rule."
     },
     {
-        "category": "ANN",
+        "category": "8. Neural Networks",
         "q": "What is the Vanishing Gradient problem?",
-        "a": "In deep networks with sigmoid/tanh functions, gradients can become extremely small during backpropagation, stopping earlier layers from learning. <strong>ReLU</strong> is often used to fix this."
+        "a": "In deep networks, gradients can become infinitely small as they are multiplied during backprop, causing early layers to stop learning. <strong>ReLU</strong> and <strong>Batch Normalization</strong> help fix this."
     },
     {
-        "category": "ANN",
-        "q": "Why is ReLU (Rectified Linear Unit) preferred over Sigmoid in hidden layers?",
-        "a": "ReLU avoids the vanishing gradient problem for positive values and is computationally efficient (just `max(0, x)`)."
+        "category": "8. Neural Networks",
+        "q": "What is Dropout?",
+        "a": "A regularization technique where neurons are randomly ignored during training to prevent co-adaptation and overfitting."
     },
     {
-        "category": "ANN",
-        "q": "What is the purpose of 'Dropout'?",
-        "a": "It is a regularization technique where randomly selected neurons are ignored (dropped) during training. This forces the network to learn robust features and prevents <strong>overfitting</strong>."
+        "category": "8. Neural Networks",
+        "q": "What is Batch Normalization?",
+        "a": "A technique to normalize the inputs of each layer to have a mean of 0 and variance of 1. It speeds up training and makes the network more stable."
     },
     {
-        "category": "ANN",
-        "q": "What is an Epoch in neural network training?",
-        "a": "One Epoch is when the <strong>entire dataset</strong> has passed forward and backward through the neural network exactly once."
+        "category": "8. Neural Networks",
+        "q": "Difference between Stochastic Gradient Descent (SGD) and Mini-batch GD?",
+        "a": "SGD updates weights after <strong>every single sample</strong> (noisy, fast). Mini-batch GD updates after a <strong>small batch</strong> of samples (balance between speed and stability)."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is the Bias-Variance Tradeoff?",
+        "a": "<strong>Bias</strong> is error due to overly simplistic assumptions (underfitting). <strong>Variance</strong> is error due to sensitivity to noise (overfitting). You want to find the sweet spot minimizing total error."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is Cross-Validation (e.g., K-Fold)?",
+        "a": "A technique to assess how the results of a statistical analysis will generalize to an independent data set. It splits data into K folds, training on K-1 and testing on 1, K times."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is a Confusion Matrix?",
+        "a": "A table used to evaluate classification models. It shows True Positives, True Negatives, False Positives (Type I error), and False Negatives (Type II error)."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "Recall vs Precision: Which is more important for cancer detection?",
+        "a": "<strong>Recall</strong> is more important. You want to catch all cancer cases (minimize False Negatives), even if it means some healthy people are flagged for further testing (False Positives)."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "How does K-Means Clustering work?",
+        "a": "1. Initialize K centroids.<br>2. Assign points to nearest centroid.<br>3. Recalculate centroids.<br>4. Repeat until convergence."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "How do you choose 'K' in K-Means?",
+        "a": "Using the <strong>Elbow Method</strong>. Plot the Sum of Squared Errors (SSE) vs K, and look for the 'elbow' point where the reduction in SSE diminishes."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "Difference between K-Means and K-Nearest Neighbors (KNN)?",
+        "a": "K-Means is <strong>Unsupervised</strong> (Clustering). KNN is <strong>Supervised</strong> (Classification/Regression). They are completely different algorithms despite similar names."
     }
 ]
