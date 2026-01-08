@@ -1,0 +1,102 @@
+[
+    {
+        "category": "Logistic Regression",
+        "q": "What is the main difference between Linear Regression and Logistic Regression?",
+        "a": "Linear Regression predicts a <strong>continuous</strong> value (e.g., house prices), whereas Logistic Regression predicts the <strong>probability</strong> of an event belonging to a categorical class (e.g., spam or not spam)."
+    },
+    {
+        "category": "Logistic Regression",
+        "q": "Which activation function is used to map predictions to probabilities between 0 and 1?",
+        "a": "The <strong>Sigmoid</strong> function.<br>Formula: S(x) = 1 / (1 + e^-x)"
+    },
+    {
+        "category": "Logistic Regression",
+        "q": "Why is Mean Squared Error (MSE) generally not used as a cost function for Logistic Regression?",
+        "a": "Because using MSE with the Sigmoid function results in a <strong>non-convex</strong> cost function with many local minima, making it difficult for Gradient Descent to find the global minimum. <strong>Log Loss</strong> is used instead."
+    },
+    {
+        "category": "Logistic Regression",
+        "q": "How do you handle multiclass classification using Logistic Regression?",
+        "a": "You can use the <strong>One-vs-Rest (OvR)</strong> approach or use <strong>Softmax Regression</strong> (Multinomial Logistic Regression) to handle multiple classes."
+    },
+    {
+        "category": "Logistic Regression",
+        "q": "What is the 'decision boundary' in Logistic Regression?",
+        "a": "It is a hyperplane that separates the classes. Typically, if the predicted probability is > 0.5, it is classified as positive; otherwise, it is negative."
+    },
+    {
+        "category": "Random Forest",
+        "q": "What is the core concept behind Random Forest?",
+        "a": "It is an <strong>Ensemble</strong> method that uses <strong>Bagging (Bootstrap Aggregating)</strong>. It builds multiple decision trees on random subsets of data and features, then averages their predictions to reduce variance."
+    },
+    {
+        "category": "Random Forest",
+        "q": "How does Random Forest reduce overfitting compared to a single Decision Tree?",
+        "a": "A single tree tends to have high variance (overfitting). By averaging multiple deep trees trained on different subsets of data, Random Forest <strong>reduces the overall variance</strong> without significantly increasing bias."
+    },
+    {
+        "category": "Random Forest",
+        "q": "What is OOB (Out-Of-Bag) Error?",
+        "a": "It is an internal validation metric. Since each tree is trained on a bootstrap sample (approx. 2/3 of data), the remaining 1/3 (OOB data) is used to evaluate the tree's performance without a separate validation set."
+    },
+    {
+        "category": "Random Forest",
+        "q": "Why is 'Feature Randomness' important in Random Forest?",
+        "a": "By forcing each split to consider only a random subset of features, it ensures the trees are <strong>decorrelated</strong>. This prevents a single dominant feature from making all trees identical."
+    },
+    {
+        "category": "Random Forest",
+        "q": "Can Random Forest be used for both classification and regression?",
+        "a": "Yes. For classification, it uses <strong>majority voting</strong>. For regression, it takes the <strong>average</strong> of the outputs from all trees."
+    },
+    {
+        "category": "XGBoost",
+        "q": "How does XGBoost differ from Random Forest?",
+        "a": "XGBoost uses <strong>Boosting</strong> (sequential training), where each new tree corrects the errors of the previous ones. Random Forest uses <strong>Bagging</strong> (parallel training)."
+    },
+    {
+        "category": "XGBoost",
+        "q": "What makes XGBoost faster than traditional Gradient Boosting?",
+        "a": "It uses <strong>parallel processing</strong> for tree construction (specifically finding the best split), hardware optimization (cache awareness), and handles sparse data efficiently."
+    },
+    {
+        "category": "XGBoost",
+        "q": "How does XGBoost handle missing values?",
+        "a": "It learns a <strong>default direction</strong> for missing values during training. It tries putting missing values to the left and right, choosing the direction that minimizes the loss."
+    },
+    {
+        "category": "XGBoost",
+        "q": "What regularization techniques does XGBoost use?",
+        "a": "It includes <strong>L1 (Lasso)</strong> and <strong>L2 (Ridge)</strong> regularization to penalize complex models and prevent overfitting."
+    },
+    {
+        "category": "XGBoost",
+        "q": "Why is XGBoost considered a 'Gradient' Boosting algorithm?",
+        "a": "Because it minimizes the loss function by adding new models that predict the <strong>gradients (residuals)</strong> of the loss function with respect to the previous prediction."
+    },
+    {
+        "category": "ANN",
+        "q": "What is Backpropagation?",
+        "a": "It is the algorithm used to update weights. It calculates the gradient of the loss function with respect to each weight by applying the <strong>Chain Rule</strong> backward from the output layer to the input layer."
+    },
+    {
+        "category": "ANN",
+        "q": "What is the Vanishing Gradient problem?",
+        "a": "In deep networks with sigmoid/tanh functions, gradients can become extremely small during backpropagation, stopping earlier layers from learning. <strong>ReLU</strong> is often used to fix this."
+    },
+    {
+        "category": "ANN",
+        "q": "Why is ReLU (Rectified Linear Unit) preferred over Sigmoid in hidden layers?",
+        "a": "ReLU avoids the vanishing gradient problem for positive values and is computationally efficient (just `max(0, x)`)."
+    },
+    {
+        "category": "ANN",
+        "q": "What is the purpose of 'Dropout'?",
+        "a": "It is a regularization technique where randomly selected neurons are ignored (dropped) during training. This forces the network to learn robust features and prevents <strong>overfitting</strong>."
+    },
+    {
+        "category": "ANN",
+        "q": "What is an Epoch in neural network training?",
+        "a": "One Epoch is when the <strong>entire dataset</strong> has passed forward and backward through the neural network exactly once."
+    }
+]

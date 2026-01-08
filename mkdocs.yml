@@ -56,7 +56,8 @@ nav:
   - Projects:
       - Canada IEC Monitor: projects/iec-monitor.md
       - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md
-
+  - Quiz:
+      - Flash Cards: quiz/ml-quiz.md
 
 extra:
   social:
