@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // 메인 페이지가 아니면 실행하지 않음 (원한다면 이 부분을 지워서 모든 페이지에 적용 가능)
     if (!isHome) return;
 
+    // [추가된 부분] 홈 화면이면 body 태그에 'is-home'이라는 클래스를 붙임
+    document.body.classList.add("is-home");
+
     // 2. 캔버스 생성 및 스타일 설정 (배경으로 깔기 위한 설정)
     const canvas = document.createElement('canvas');
     canvas.id = 'boidCanvas';
