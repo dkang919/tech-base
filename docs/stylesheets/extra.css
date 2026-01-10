@@ -1,0 +1,36 @@
+/* 1. 메인 컨텐츠 배경 투명화 (필수) */
+.md-main, .md-content, .md-container {
+    background: transparent !important;
+}
+
+/* 2. "Home" 흰색 박스가 혹시 남아있다면 강제 제거 */
+.md-header__topic {
+    font-weight: bold;
+}
+
+/* 3. 헤더(메뉴바) 디자인 수정 */
+/* 헤더 배경을 심해색과 같게 하거나 반투명하게 설정 */
+.md-header {
+    background-color: rgba(13, 27, 42, 0.85) !important; /* 약간 투명한 심해색 */
+    box-shadow: none !important; /* 그림자 제거해서 평평하게 */
+}
+
+/* 4. 텍스트 색상 변경 (검정 -> 흰색/밝은 회색) */
+/* 제목(H1) 색상 */
+.md-typeset h1 {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(100, 200, 255, 0.5); /* 약간의 네온 효과 */
+    text-align: center; /* 제목 가운데 정렬 */
+    margin-top: 20vh; /* 화면 중앙 쯤에 오도록 위에서 띄움 */
+}
+
+/* 일반 본문 텍스트 색상 */
+.md-typeset p, .md-typeset li {
+    color: #e0e0e0 !important;
+}
+
+/* 5. 모바일/태블릿에서 나오는 하단/상단 여백 제거 (선택사항) */
+.md-content__inner {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
