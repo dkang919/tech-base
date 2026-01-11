@@ -30,12 +30,13 @@ jobs:
           GCP_KEY: ${{ secrets.GCP_SA_KEY }}
         run: echo "$GCP_KEY" > gcp-key.json
 
+      # 2. 파이썬 실행 단계 (여기가 중요! 변수명은 꼭 GOOGLE_... 이어야 함)
       - name: Generate Chart
         env:
-          # [수정됨] 파이썬에게 파일 경로를 전달
-          GCP_SA_KEY: gcp-key.json
-        # scripts 폴더 안에 있는 파이썬 파일 실행
-        run: python scripts/generate_charts.py
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+        run: | 
+          ls -la gcp-key.json  # 파일 있는지 확인용
+          python scripts/generate_charts.py
 
       # [추가됨] 보안을 위해 사용 후 즉시 삭제 (성공/실패 무관하게 실행)
       - name: Delete credentials file
