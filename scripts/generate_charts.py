@@ -46,7 +46,6 @@ def run_analysis():
 
     # 4. 플롯 그리기 (Line + Area)
     # 색상: 신뢰감을 주는 Tech Blue (#2563EB) 또는 Emerald Green (#10B981)
-    # 여기서는 기존의 녹색 계열을 더 세련된 색으로 변경
     main_color = '#10B981' 
     
     ax.plot(daily_avg['date'], daily_avg['price'], 
@@ -58,15 +57,16 @@ def run_analysis():
                     color=main_color, alpha=0.1)
 
     # 5. 최신 가격 강조 (Annotation)
-    last_date = daily_avg['date'].iloc[-1]
-    last_price = daily_avg['price'].iloc[-1]
-    
-    ax.annotate(f'Current: ${last_price:,.0f}', 
-                xy=(last_date, last_price), 
-                xytext=(0, 15), textcoords='offset points',
-                ha='center', va='bottom',
-                fontsize=11, fontweight='bold', color=main_color,
-                bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=main_color, alpha=0.9))
+    if not daily_avg.empty:
+        last_date = daily_avg['date'].iloc[-1]
+        last_price = daily_avg['price'].iloc[-1]
+        
+        ax.annotate(f'Current: ${last_price:,.0f}', 
+                    xy=(last_date, last_price), 
+                    xytext=(0, 15), textcoords='offset points',
+                    ha='center', va='bottom',
+                    fontsize=11, fontweight='bold', color=main_color,
+                    bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=main_color, alpha=0.9))
 
     # 6. 축 및 레이블 다듬기 (Chart Junk 제거)
     sns.despine(left=True, bottom=False) # 왼쪽, 위, 오른쪽 테두리 제거
@@ -74,8 +74,20 @@ def run_analysis():
     ax.set_title('RAM (Memory) Price Trend', fontsize=18, fontweight='bold', pad=20, loc='left')
     ax.set_xlabel('') # X축 라벨 생략 (날짜보면 아니까)
     ax.set_ylabel('Avg Price (CAD)', fontsize=11, color='gray')
-    ax.set_ylim(500, 800)
     
+    # --- [Dynamic Y-Axis 설정] ---
+    # Why: 데이터 변동폭에 따라 차트가 중앙에 오도록 자동 조정
+    # How: 최솟값/최댓값에 100불 버퍼를 적용하되, 0 밑으로는 내려가지 않게 설정
+    if not daily_avg.empty:
+        min_price = daily_avg['price'].min()
+        max_price = daily_avg['price'].max()
+        
+        y_bottom = max(0, min_price - 100) # 0 이하로 내려가는 것 방지
+        y_top = max_price + 100
+        
+        ax.set_ylim(y_bottom, y_top)
+    # ----------------------------
+
     # 날짜 포맷
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.xticks(rotation=0, fontsize=10)
