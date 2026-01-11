@@ -45,11 +45,18 @@ jobs:
         if: always()
         run: rm gcp-key.json
 
+      # [기존 코드] 변경사항 커밋 및 푸시
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/images/ram_price_trend.png
-          # 변경사항이 있을 때만 커밋 (에러 방지)
           git commit -m "Auto-update: RAM price chart" || exit 0
           git push
+
+      # 웹사이트 강제 배포 (Deploy)
+      # 주의: mkdocs가 설치되어 있어야 합니다.
+      - name: Deploy MkDocs
+        run: |
+          pip install mkdocs-material  # mkdocs 테마 설치 (필요시 requirements.txt에 있다면 생략 가능)
+          mkdocs gh-deploy --force
