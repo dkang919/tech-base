@@ -62,6 +62,8 @@ nav:
       - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md
   - Quiz:
       - Flash Cards: quiz/ml-quiz.md
+  - Study:
+      - Notes: study/notes.md
 
 extra:
   social:
