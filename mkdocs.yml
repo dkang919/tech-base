@@ -64,6 +64,7 @@ nav:
       - Flash Cards: quiz/ml-quiz.md
   - Study:
       - Notes: study/notes.md
+      - Evaluation Metrics: study/evaluation_metrics.md
 
 extra:
   social:
