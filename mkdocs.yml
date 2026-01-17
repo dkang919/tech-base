@@ -65,8 +65,8 @@ nav:
   - Study:
       - Notes: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
-      - Logistic Regression: study/logistic-regression.md
-      
+      - Logistic Regression: study/logistic_regression.md
+
 extra:
   social:
     - icon: fontawesome/brands/github
