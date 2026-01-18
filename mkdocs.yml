@@ -68,6 +68,7 @@ nav:
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
   - Algorithm of Taste:
+      - Food: "taste/food.md"
 
 extra:
   social:
