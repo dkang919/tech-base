@@ -66,6 +66,7 @@ nav:
       - Notes: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
       - Logistic Regression: study/logistic_regression.md
+      - Decision Trees: study/decision_trees.md
 
 extra:
   social:
