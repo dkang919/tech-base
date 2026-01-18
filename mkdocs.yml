@@ -67,6 +67,7 @@ nav:
       - Evaluation Metrics: study/evaluation_metrics.md
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
+  - Algorithm of Taste:
 
 extra:
   social:
