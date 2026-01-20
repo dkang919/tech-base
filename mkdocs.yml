@@ -67,7 +67,8 @@ nav:
       - Evaluation Metrics: study/evaluation_metrics.md
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
-  - Algorithm of Taste:
+      - Random Forest: study/random_forest.md
+  - Algorithm of Taste:  
       - Food: "taste/cooking.md"
 
 extra:
