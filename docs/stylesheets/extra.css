@@ -57,3 +57,17 @@ body.is-home .md-content__inner {
     background-color: #0d1b2a !important; 
 }
 */
+
+/* =========================================
+   3. 네비게이션 바 커스텀 (Algorithm of Taste 분리)
+   ========================================= */
+
+/* nav 설정상 'Algorithm of Taste'는 5번째 항목입니다.
+   이 항목에 왼쪽 여백(margin-left)을 auto로 주어 
+   남은 공간을 모두 차지하게 함으로써 오른쪽 끝으로 밀어냅니다.
+*/
+@media screen and (min-width: 76.25em) {
+    .md-tabs__list > li:nth-child(5) {
+        margin-left: auto;
+    }
+}
