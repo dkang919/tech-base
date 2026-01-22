@@ -67,6 +67,9 @@ nav:
       - Decision Trees: study/decision_tree.md
       - Random Forest: study/random_forest.md
       - Flash Cards: study/quiz/ml-quiz.md
+
+  - After Action Review (AAR):  
+      - 2026 Speech Contest: "aar/2026-01-21.md"
   - Algorithm of Taste:  
       - Food: "taste/cooking.md"
 
