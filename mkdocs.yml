@@ -60,14 +60,13 @@ nav:
   - Projects:
       - Canada IEC Monitor: projects/iec-monitor.md
       - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md
-  - Quiz:
-      - Flash Cards: quiz/ml-quiz.md
   - Study:
       - Notes: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
       - Random Forest: study/random_forest.md
+      - Flash Cards: study/quiz/ml-quiz.md
   - Algorithm of Taste:  
       - Food: "taste/cooking.md"
 
