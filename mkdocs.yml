@@ -66,6 +66,7 @@ nav:
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
       - Random Forest: study/random_forest.md
+      - Principal Component Analysis: study/pca.md
       - Flash Cards: study/quiz/ml-quiz.md
 
   - After Action Review (AAR):  
