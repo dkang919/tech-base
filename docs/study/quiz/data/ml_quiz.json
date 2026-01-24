@@ -35,6 +35,46 @@
         "a": "By using the <strong>Variance Inflation Factor (VIF)</strong>. A VIF value greater than 5 or 10 indicates high multicollinearity."
     },
     {
+        "category": "1. Regression",
+        "q": "What is the effect of outliers on Linear Regression?",
+        "a": "Linear regression minimizes the sum of squared errors, so outliers have a <strong>disproportionately large impact</strong> on the slope and intercept, pulling the regression line toward them."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is Heteroscedasticity?",
+        "a": "The violation of the homoscedasticity assumption. It means the <strong>variance of errors is not constant</strong> across all levels of the independent variable (e.g., error increases as X increases)."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is Polynomial Regression?",
+        "a": "A form of regression analysis in which the relationship between the independent variable X and the dependent variable Y is modeled as an <strong>n-th degree polynomial</strong>."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is the difference between MAE and MSE?",
+        "a": "<strong>MAE (Mean Absolute Error)</strong> is robust to outliers but not differentiable at 0. <strong>MSE (Mean Squared Error)</strong> penalizes larger errors more heavily and is differentiable, making it easier to optimize."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is Elastic Net Regularization?",
+        "a": "A middle ground between Lasso and Ridge. It combines both <strong>L1 and L2 penalties</strong>. It is useful when there are correlated features (where Lasso might pick one randomly)."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is the 'dummy variable trap'?",
+        "a": "It occurs when two or more dummy variables created by one-hot encoding are highly correlated (multicollinear). Solution: Drop one of the dummy variables (n-1 categories)."
+    },
+    {
+        "category": "1. Regression",
+        "q": "When should you use Mean Squared Logarithmic Error (MSLE)?",
+        "a": "When the target variable has <strong>exponential growth</strong> or huge variance (e.g., house prices), and you care more about the <strong>percent difference</strong> than the absolute difference."
+    },
+    {
+        "category": "1. Regression",
+        "q": "What is Generalized Linear Model (GLM)?",
+        "a": "An extension of linear regression that allows for response variables that have error distribution models other than a normal distribution (e.g., Poisson for counts, Binomial for binary)."
+    },
+    {
         "category": "2. Logistic Regression",
         "q": "Why is accuracy not a good metric for imbalanced datasets?",
         "a": "In a highly imbalanced dataset (e.g., 99% negative), a model predicting only 'negative' will have 99% accuracy but zero predictive power. Metrics like <strong>Precision, Recall, and F1-Score</strong> are better."
@@ -48,6 +88,31 @@
         "category": "2. Logistic Regression",
         "q": "What is the interpretability of Logistic Regression coefficients?",
         "a": "The coefficients represent the change in the <strong>log-odds</strong> of the outcome for a one-unit increase in the predictor variable."
+    },
+    {
+        "category": "2. Logistic Regression",
+        "q": "Can Logistic Regression handle non-linear decision boundaries?",
+        "a": "Not natively, as it is a linear classifier. However, you can model non-linear boundaries by <strong>feature engineering</strong> (e.g., adding polynomial terms or interaction terms)."
+    },
+    {
+        "category": "2. Logistic Regression",
+        "q": "What is the difference between Sigmoid and Softmax?",
+        "a": "<strong>Sigmoid</strong> is used for binary classification (outputs a single probability). <strong>Softmax</strong> is a generalization of Sigmoid for <strong>multi-class classification</strong> (outputs a probability vector summing to 1)."
+    },
+    {
+        "category": "2. Logistic Regression",
+        "q": "What is Log Loss (Cross-Entropy Loss)?",
+        "a": "The loss function used in Logistic Regression. It measures the performance of a classification model where the prediction input is a probability value between 0 and 1."
+    },
+    {
+        "category": "2. Logistic Regression",
+        "q": "Why is the decision boundary of Logistic Regression linear?",
+        "a": "Because the log-odds are modeled as a <strong>linear combination</strong> of inputs: log(p/(1-p)) = wX + b."
+    },
+    {
+        "category": "2. Logistic Regression",
+        "q": "What is 'One-vs-Rest' (OvR) strategy?",
+        "a": "A heuristic to extend binary classifiers (like Logistic Regression) to multi-class problems. It trains one classifier per class against all other classes."
     },
     {
         "category": "3. Decision Tree",
@@ -70,6 +135,31 @@
         "a": "By <strong>Pruning</strong> (pre-pruning or post-pruning), setting a maximum depth, setting a minimum number of samples per leaf, or using ensemble methods."
     },
     {
+        "category": "3. Decision Tree",
+        "q": "What happens if a Decision Tree is not pruned?",
+        "a": "It will likely grow until every leaf is pure, leading to massive <strong>overfitting</strong> where the model memorizes the training noise."
+    },
+    {
+        "category": "3. Decision Tree",
+        "q": "Can Decision Trees handle missing values?",
+        "a": "Yes, some implementations (like CART) can handle missing values by using <strong>surrogate splits</strong>, although Scikit-Learn's implementation currently requires imputation."
+    },
+    {
+        "category": "3. Decision Tree",
+        "q": "Do Decision Trees require feature scaling?",
+        "a": "No. Decision trees use <strong>rule-based splits</strong> and are not affected by the magnitude or scale of the features."
+    },
+    {
+        "category": "3. Decision Tree",
+        "q": "What is the difference between Classification and Regression Trees (CART)?",
+        "a": "Classification trees predict a <strong>class label</strong> (using Gini/Entropy). Regression trees predict a <strong>continuous value</strong> (using variance reduction or MSE)."
+    },
+    {
+        "category": "3. Decision Tree",
+        "q": "Why are Decision Trees considered 'high variance' models?",
+        "a": "Small changes in the training data can result in a completely different tree structure."
+    },
+    {
         "category": "4. Random Forest",
         "q": "What is Bootstrap Aggregating (Bagging)?",
         "a": "It involves creating multiple subsets of data from the training set with replacement (Bootstrap) and training a model on each subset. The final prediction is an average (Aggregating)."
@@ -85,6 +175,26 @@
         "a": "It controls the diversity of the trees. A smaller mtry makes trees more diverse (less correlated) but potentially individually weaker. It is a key hyperparameter to tune."
     },
     {
+        "category": "4. Random Forest",
+        "q": "What is Out-of-Bag (OOB) Error?",
+        "a": "A method of measuring the prediction error of random forests using the data points that were <strong>left out</strong> during the bootstrap sampling for each tree. It acts as an internal validation set."
+    },
+    {
+        "category": "4. Random Forest",
+        "q": "How does Random Forest determine Feature Importance?",
+        "a": "By calculating the <strong>average decrease in impurity</strong> (Gini/Entropy) across all trees when a specific feature is used for a split."
+    },
+    {
+        "category": "4. Random Forest",
+        "q": "Can Random Forest overfit?",
+        "a": "Yes, but it is much harder to overfit than a single Decision Tree. Overfitting can happen if the number of trees is too small or the data is very noisy."
+    },
+    {
+        "category": "4. Random Forest",
+        "q": "What is ExtraTrees (Extremely Randomized Trees)?",
+        "a": "A variation of Random Forest where, instead of searching for the optimal split, thresholds are drawn <strong>randomly</strong> for each candidate feature, and the best of these randomly-generated thresholds is chosen."
+    },
+    {
         "category": "5. Boosting (XGBoost)",
         "q": "How does Gradient Boosting differ from AdaBoost?",
         "a": "AdaBoost updates weights of data points (misclassified points get higher weight). Gradient Boosting fits new models to the <strong>residual errors</strong> (gradients) of the previous models."
@@ -98,6 +208,26 @@
         "category": "5. Boosting (XGBoost)",
         "q": "Why is XGBoost so popular in Kaggle competitions?",
         "a": "Speed and performance. It uses system optimization (parallelization, cache awareness) and algorithmic enhancements (regularization, handling missing values, tree pruning)."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "What is LightGBM's main advantage over XGBoost?",
+        "a": "It uses <strong>Leaf-wise growth</strong> (best-first) rather than Level-wise growth, and histogram-based algorithms, making it significantly <strong>faster</strong> and more memory-efficient on large datasets."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "What is CatBoost best at?",
+        "a": "It handles <strong>Categorical features</strong> automatically and effectively without requiring extensive preprocessing like One-Hot Encoding."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "What is Early Stopping?",
+        "a": "A technique to prevent overfitting by stopping the training process if the performance on a validation set does not improve for a specified number of iterations."
+    },
+    {
+        "category": "5. Boosting (XGBoost)",
+        "q": "How does Boosting handle bias and variance?",
+        "a": "Boosting primarily reduces <strong>bias</strong> (by correcting errors of weak learners) but can also reduce variance."
     },
     {
         "category": "6. SVM",
@@ -125,6 +255,26 @@
         "a": "It defines how far the influence of a single training example reaches. High Gamma means only close points are considered (complex boundary, overfitting risk). Low Gamma means far points are considered."
     },
     {
+        "category": "6. SVM",
+        "q": "When should you use a Linear Kernel vs. RBF Kernel?",
+        "a": "Use <strong>Linear</strong> if the number of features is very large (e.g., text classification). Use <strong>RBF</strong> if the data is not linearly separable and the dataset size is moderate."
+    },
+    {
+        "category": "6. SVM",
+        "q": "Is SVM sensitive to outliers?",
+        "a": "Yes, especially with a high 'C' value (hard margin), as it will try to classify the outlier correctly, potentially twisting the decision boundary."
+    },
+    {
+        "category": "6. SVM",
+        "q": "Why does SVM require feature scaling?",
+        "a": "Because it relies on <strong>distance calculations</strong>. Features with larger ranges will dominate the distance metric."
+    },
+    {
+        "category": "6. SVM",
+        "q": "What is the Hinge Loss function?",
+        "a": "The loss function used for training SVMs. It penalizes predictions that are on the wrong side of the margin or incorrectly classified."
+    },
+    {
         "category": "7. PCA",
         "q": "What is the goal of Principal Component Analysis (PCA)?",
         "a": "To reduce dimensionality while preserving as much <strong>variance</strong> (information) as possible by transforming variables into a new set of orthogonal variables (Principal Components)."
@@ -138,6 +288,26 @@
         "category": "7. PCA",
         "q": "What are Eigenvalues and Eigenvectors in PCA?",
         "a": "Eigenvectors represent the <strong>direction</strong> of the axes (Principal Components). Eigenvalues represent the <strong>magnitude of variance</strong> explained by that component."
+    },
+    {
+        "category": "7. PCA",
+        "q": "What is the 'Explained Variance Ratio'?",
+        "a": "The percentage of the total variance in the dataset that is attributed to each principal component."
+    },
+    {
+        "category": "7. PCA",
+        "q": "Can you use PCA for feature selection?",
+        "a": "Not exactly. PCA performs <strong>feature extraction</strong> (creating new features), not selection. You lose the interpretability of original features."
+    },
+    {
+        "category": "7. PCA",
+        "q": "What is the difference between PCA and t-SNE?",
+        "a": "PCA is linear and preserves global structure/variance. <strong>t-SNE</strong> is non-linear and preserves <strong>local structure</strong> (neighbor relationships), making it better for visualization of clusters."
+    },
+    {
+        "category": "7. PCA",
+        "q": "What is LDA (Linear Discriminant Analysis) vs PCA?",
+        "a": "PCA is <strong>unsupervised</strong> (maximizes variance). LDA is <strong>supervised</strong> (maximizes separation between class means)."
     },
     {
         "category": "8. Neural Networks",
@@ -175,6 +345,46 @@
         "a": "SGD updates weights after <strong>every single sample</strong> (noisy, fast). Mini-batch GD updates after a <strong>small batch</strong> of samples (balance between speed and stability)."
     },
     {
+        "category": "8. Neural Networks",
+        "q": "What is the difference between an Epoch and a Batch?",
+        "a": "<strong>Batch</strong>: A subset of samples processed before updating weights. <strong>Epoch</strong>: One full pass through the entire training dataset."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "Why do we initialize weights randomly?",
+        "a": "If weights were initialized to zero, all neurons would learn the same features during backpropagation (symmetry problem), effectively making the network a linear model."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is a Convolutional Neural Network (CNN) used for?",
+        "a": "Primarily for <strong>image data</strong>. It uses convolutional layers to automatically detect spatial hierarchies of features (edges, shapes, objects)."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is a Recurrent Neural Network (RNN) used for?",
+        "a": "For <strong>sequential data</strong> (time series, text). It has a 'memory' that captures information from previous steps in the sequence."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is the purpose of the ReLU activation function?",
+        "a": "It solves the vanishing gradient problem better than Sigmoid/Tanh and is computationally efficient. f(x) = max(0, x)."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is the Adam optimizer?",
+        "a": "An adaptive learning rate optimization algorithm that combines the benefits of <strong>Momentum</strong> and <strong>RMSprop</strong>."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is Transfer Learning?",
+        "a": "Taking a pre-trained model (e.g., trained on ImageNet) and fine-tuning it for a different but related task."
+    },
+    {
+        "category": "8. Neural Networks",
+        "q": "What is an Autoencoder?",
+        "a": "An unsupervised neural network used for dimensionality reduction or denoising. It learns to compress input into a latent space and then reconstruct it."
+    },
+    {
         "category": "9. Model Evaluation",
         "q": "What is the Bias-Variance Tradeoff?",
         "a": "<strong>Bias</strong> is error due to overly simplistic assumptions (underfitting). <strong>Variance</strong> is error due to sensitivity to noise (overfitting). You want to find the sweet spot minimizing total error."
@@ -195,6 +405,31 @@
         "a": "<strong>Recall</strong> is more important. You want to catch all cancer cases (minimize False Negatives), even if it means some healthy people are flagged for further testing (False Positives)."
     },
     {
+        "category": "9. Model Evaluation",
+        "q": "What is Stratified K-Fold?",
+        "a": "A variation of K-Fold that ensures each fold has the <strong>same proportion of class labels</strong> as the original dataset. Crucial for imbalanced data."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is the F1-Score?",
+        "a": "The <strong>Harmonic Mean</strong> of Precision and Recall. It is useful when you need to balance both metrics."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "Difference between macro-average and weighted-average?",
+        "a": "<strong>Macro</strong> calculates metrics for each class and averages them (treats all classes equally). <strong>Weighted</strong> averages metrics weighted by the number of true instances (accounts for class imbalance)."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is the Kappa Score (Cohen's Kappa)?",
+        "a": "A statistic that measures inter-rater agreement for qualitative items. In ML, it tells you how much better your classifier is performing over the performance of a classifier that simply guesses at random."
+    },
+    {
+        "category": "9. Model Evaluation",
+        "q": "What is Data Leakage?",
+        "a": "When information from outside the training dataset is used to create the model. Example: Scaling data before splitting into train/test, or including the target variable in the features."
+    },
+    {
         "category": "10. Clustering (Etc)",
         "q": "How does K-Means Clustering work?",
         "a": "1. Initialize K centroids.<br>2. Assign points to nearest centroid.<br>3. Recalculate centroids.<br>4. Repeat until convergence."
@@ -208,5 +443,260 @@
         "category": "10. Clustering (Etc)",
         "q": "Difference between K-Means and K-Nearest Neighbors (KNN)?",
         "a": "K-Means is <strong>Unsupervised</strong> (Clustering). KNN is <strong>Supervised</strong> (Classification/Regression). They are completely different algorithms despite similar names."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "What is DBSCAN?",
+        "a": "Density-Based Spatial Clustering of Applications with Noise. It groups points that are closely packed together and marks points in low-density regions as <strong>outliers/noise</strong>."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "What is the Silhouette Score?",
+        "a": "A metric used to calculate the goodness of a clustering technique. It measures how similar an object is to its own cluster (cohesion) compared to other clusters (separation)."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "What is Hierarchical Clustering?",
+        "a": "An algorithm that builds a hierarchy of clusters. It can be Agglomerative (bottom-up) or Divisive (top-down) and is often visualized using a <strong>Dendrogram</strong>."
+    },
+    {
+        "category": "10. Clustering (Etc)",
+        "q": "Does K-Means guarantee a global optimum?",
+        "a": "No, it guarantees convergence to a <strong>local optimum</strong>. Results depend heavily on the random initialization of centroids."
+    },
+    {
+        "category": "11. Naive Bayes",
+        "q": "What is the fundamental assumption of Naive Bayes?",
+        "a": "It assumes that all features are <strong>mutually independent</strong> given the class label. This is 'naive' because it is rarely true in real life."
+    },
+    {
+        "category": "11. Naive Bayes",
+        "q": "Why is Naive Bayes often used for Text Classification?",
+        "a": "Because it handles high-dimensional data very well and is computationally fast. Despite the independence assumption, it often performs surprisingly well on bag-of-words models."
+    },
+    {
+        "category": "11. Naive Bayes",
+        "q": "What is Gaussian Naive Bayes?",
+        "a": "A variant used when features are continuous and assumed to follow a <strong>Normal (Gaussian) distribution</strong>."
+    },
+    {
+        "category": "11. Naive Bayes",
+        "q": "What is Multinomial Naive Bayes?",
+        "a": "A variant used for discrete counts. It is the standard for <strong>text classification</strong> where features are word counts."
+    },
+    {
+        "category": "11. Naive Bayes",
+        "q": "What is the 'Zero Frequency' problem in Naive Bayes?",
+        "a": "If a categorical variable has a category in the test set that was not observed in the training set, the probability becomes 0. Solution: <strong>Laplace Smoothing</strong>."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is One-Hot Encoding?",
+        "a": "Converting categorical variables into a binary matrix (0s and 1s) where each category becomes a separate feature."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is Label Encoding?",
+        "a": "Converting categorical labels into integers (0, 1, 2...). Caution: Algorithms might misinterpret the integers as having an <strong>ordinal relationship</strong> (e.g., 2 > 1)."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "Difference between Normalization (Min-Max) and Standardization (Z-Score)?",
+        "a": "<strong>Normalization</strong> scales data to a fixed range [0, 1]. <strong>Standardization</strong> centers data to mean 0 and standard deviation 1. Standardization is generally preferred for algorithms assuming Gaussian distribution."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is Target Encoding (Mean Encoding)?",
+        "a": "Replacing a categorical value with the <strong>mean of the target variable</strong> for that category. Risk: High potential for data leakage and overfitting."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "How do you handle Missing Data?",
+        "a": "1. <strong>Dropping</strong> rows/cols (if missingness is low).<br>2. <strong>Imputation</strong> (Mean, Median, Mode).<br>3. <strong>Model-based</strong> (KNN Imputer).<br>4. <strong>Flagging</strong> (adding a binary 'is_missing' feature)."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is the 'Curse of Dimensionality'?",
+        "a": "As the number of features increases, the amount of data needed to generalize accurately grows exponentially, and data becomes sparse."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is SMOTE?",
+        "a": "Synthetic Minority Over-sampling Technique. It creates synthetic samples for the minority class by interpolating between existing samples to address <strong>class imbalance</strong>."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is Binning (Discretization)?",
+        "a": "Converting continuous variables into discrete intervals (bins). It can help handle outliers and non-linear relationships."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "What is a Sparse Matrix?",
+        "a": "A matrix comprised mostly of zeros. It is used in NLP (TF-IDF, One-Hot) to save memory by only storing non-zero elements."
+    },
+    {
+        "category": "12. Feature Engineering & Preprocessing",
+        "q": "Why would you use Log Transformation on a feature?",
+        "a": "To reduce <strong>skewness</strong> in the data distribution, making it more normal-like, and to handle multiplicative relationships."
+    },
+    {
+        "category": "13. Time Series",
+        "q": "What is Stationarity in Time Series?",
+        "a": "A time series is stationary if its statistical properties (mean, variance, autocorrelation) remain <strong>constant over time</strong>. Most models (ARIMA) assume stationarity."
+    },
+    {
+        "category": "13. Time Series",
+        "q": "How do you test for Stationarity?",
+        "a": "Using the <strong>Augmented Dickey-Fuller (ADF)</strong> test. A p-value < 0.05 indicates the series is stationary (reject null hypothesis)."
+    },
+    {
+        "category": "13. Time Series",
+        "q": "What are the components of ARIMA?",
+        "a": "<strong>AR (AutoRegressive)</strong>: Uses past values.<br><strong>I (Integrated)</strong>: Differencing to make series stationary.<br><strong>MA (Moving Average)</strong>: Uses past forecast errors."
+    },
+    {
+        "category": "13. Time Series",
+        "q": "Difference between Additive and Multiplicative Seasonality?",
+        "a": "<strong>Additive</strong>: Seasonality magnitude remains constant (Trend + Seasonality). <strong>Multiplicative</strong>: Seasonality grows with the trend (Trend * Seasonality)."
+    },
+    {
+        "category": "13. Time Series",
+        "q": "What is Autocorrelation (ACF) vs Partial Autocorrelation (PACF)?",
+        "a": "<strong>ACF</strong> measures correlation with past lags including indirect effects. <strong>PACF</strong> measures correlation with a lag removing effects of intermediate lags (useful for determining AR order)."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is Tokenization?",
+        "a": "The process of breaking down text into smaller units called <strong>tokens</strong> (words, subwords, or characters)."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is TF-IDF?",
+        "a": "Term Frequency-Inverse Document Frequency. It weighs words by how frequent they are in a document but penalizes words that are frequent across <strong>all</strong> documents (e.g., 'the')."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is Stop Word Removal?",
+        "a": "Removing common words (like 'and', 'is', 'the') that carry little meaningful information to reduce data noise and dimensionality."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What are Word Embeddings (e.g., Word2Vec, GloVe)?",
+        "a": "Dense vector representations of words where words with similar meanings have <strong>similar geometric positions</strong> in vector space."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is an N-gram?",
+        "a": "A contiguous sequence of <strong>N items</strong> (words or characters) from a given sample of text. (e.g., 'New York' is a 2-gram or bigram)."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is Lemmatization vs Stemming?",
+        "a": "<strong>Stemming</strong> chops off ends of words (fast, crude). <strong>Lemmatization</strong> uses a vocabulary and morphological analysis to return the base dictionary form (lemma)."
+    },
+    {
+        "category": "14. NLP (Natural Language Processing)",
+        "q": "What is BERT?",
+        "a": "Bidirectional Encoder Representations from Transformers. A transformer-based model that learns context from both <strong>left and right</strong> of a word simultaneously."
+    },
+    {
+        "category": "15. Recommendation Systems",
+        "q": "What is Collaborative Filtering?",
+        "a": "It recommends items based on the interactions of <strong>similar users</strong>. 'Users who liked X also liked Y'."
+    },
+    {
+        "category": "15. Recommendation Systems",
+        "q": "What is Content-Based Filtering?",
+        "a": "It recommends items based on the <strong>properties of the item</strong> itself. 'You liked a sci-fi movie, here is another sci-fi movie'."
+    },
+    {
+        "category": "15. Recommendation Systems",
+        "q": "What is the 'Cold Start' problem?",
+        "a": "The difficulty in providing recommendations for <strong>new users</strong> or <strong>new items</strong> because there is no historical interaction data."
+    },
+    {
+        "category": "15. Recommendation Systems",
+        "q": "What is Matrix Factorization?",
+        "a": "A technique (like SVD) to decompose the user-item interaction matrix into two lower-dimensional matrices representing <strong>latent factors</strong> of users and items."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is a p-value?",
+        "a": "The probability of observing results at least as extreme as the observed results, assuming the <strong>Null Hypothesis</strong> is true. Low p-value (<0.05) suggests rejecting the null."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is the Central Limit Theorem (CLT)?",
+        "a": "It states that the sampling distribution of the sample mean approaches a <strong>Normal Distribution</strong> as the sample size gets larger, regardless of the population's distribution."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "Type I vs Type II Error?",
+        "a": "<strong>Type I (False Positive)</strong>: Rejecting a true null hypothesis. <strong>Type II (False Negative)</strong>: Failing to reject a false null hypothesis."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is A/B Testing?",
+        "a": "A randomized experiment with two variants, A and B. It is the gold standard for causal inference to determine if a change causes an improvement."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is Bayes' Theorem?",
+        "a": "A formula that describes how to update the probability of a hypothesis based on new evidence. P(A|B) = P(B|A) * P(A) / P(B)."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is the Law of Large Numbers?",
+        "a": "As the size of a sample increases, its mean gets closer to the <strong>average of the whole population</strong>."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "Difference between Correlation and Covariance?",
+        "a": "<strong>Covariance</strong> indicates the direction of the linear relationship. <strong>Correlation</strong> is the normalized version (between -1 and 1) indicating both direction and strength."
+    },
+    {
+        "category": "16. Statistics & Probability",
+        "q": "What is Simpson's Paradox?",
+        "a": "A phenomenon where a trend appears in several different groups of data but <strong>disappears or reverses</strong> when these groups are combined."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Model Pickling?",
+        "a": "Serializing a Python object (like a trained model) into a <strong>byte stream</strong> to save it to disk and reload it later."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is a REST API?",
+        "a": "A standard way for two computer systems to communicate over the internet. ML models are often deployed as REST APIs to serve predictions."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Docker containers?",
+        "a": "A tool used to package a model and its dependencies (libraries, OS settings) into a single unit ensuring it runs the <strong>same way</strong> on any machine."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Latency in model serving?",
+        "a": "The <strong>time delay</strong> between sending a request to the model and receiving a prediction. Low latency is crucial for real-time applications."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Model Drift (Concept Drift)?",
+        "a": "When the statistical properties of the target variable change over time, causing the model's performance to <strong>degrade</strong>."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Horizontal Scaling?",
+        "a": "Adding <strong>more machines</strong> (nodes) to a system to handle increased load, as opposed to Vertical Scaling (adding more power to a single machine)."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is CI/CD for ML (MLOps)?",
+        "a": "Continuous Integration/Continuous Deployment. It automates the retraining, testing, and deployment of ML models."
+    },
+    {
+        "category": "17. Deployment & Production",
+        "q": "What is Feature Store?",
+        "a": "A centralized repository that stores curated features so they can be reused across different models and ensures consistency between training and serving."
     }
 ]
