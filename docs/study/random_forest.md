@@ -1,6 +1,6 @@
 # Random Forest: The Wisdom of the Crowd (Ensemble Learning)
 
-**Professor Gemini’s Top-Line Summary:**
+**Top-Line Summary:**
 If a Decision Tree is a single expert who might be opinionated and wrong (high variance), a Random Forest is a committee of 100 experts. Even if individual experts are wrong, the "majority vote" of the committee is usually right.
 
 * **Technique:** Bagging (Bootstrap Aggregating) + Feature Randomness.

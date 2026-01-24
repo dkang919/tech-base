@@ -1,6 +1,6 @@
 # Decision Trees: The Interpretable "Flowchart" of Machine Learning
 
-**Professor Gemini’s Top-Line Summary:**
+**Top-Line Summary:**
 A Decision Tree is a non-parametric algorithm that models decisions as a flowchart-like structure. It breaks down a dataset into smaller and smaller subsets while at the same time an associated decision tree is incrementally developed.
 
 * **The Superpower:** It requires almost no data preparation (no scaling/normalization) and is easily visualized.
