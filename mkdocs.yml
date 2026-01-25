@@ -63,6 +63,7 @@ nav:
   - Study:
       - Notes: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
+      - A/B Testing: study/ab-testing.md
       - Logistic Regression: study/logistic_regression.md
       - Decision Trees: study/decision_tree.md
       - Random Forest: study/random_forest.md
@@ -71,7 +72,7 @@ nav:
 
   - After Action Review (AAR):  
       - 2026 Speech Contest: "aar/2026-01-21.md"
-  - Algorithm of Taste:  
+  - My Cooking Log:  
       - Food: "taste/cooking.md"
 
 extra:
