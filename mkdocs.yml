@@ -58,8 +58,10 @@ extra_css:
 nav:
   - Home: index.md
   - Projects:
-      - Canada IEC Monitor: projects/iec-monitor.md
-      - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md
+    - Ongoing:
+          - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md   
+    - Finished:
+          - Canada IEC Monitor: projects/iec-monitor.md
   - Study:
       - Notes: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
