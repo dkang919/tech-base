@@ -5,7 +5,11 @@
         "filename": "20251225_224627.jpg",
         "title": "Campfire chicken wings",
         "comment": "BBQ Wings",
-        "tags": ["BBQ", "Wings", "Campfire"]
+        "tags": [
+            "BBQ",
+            "Wings",
+            "Campfire"
+        ]
     },
     {
         "id": "20251229_111825.jpg",
@@ -13,7 +17,10 @@
         "filename": "20251229_111825.jpg",
         "title": "First Ever Gue-Ran Ma-Ri",
         "comment": "First attempt of making Gue-Ran Ma-Ri",
-        "tags": ["Korean Egg Rolls", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Korean Egg Rolls",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260111_200451.jpg",
@@ -21,7 +28,11 @@
         "filename": "20260111_200451.jpg",
         "title": "Getting interested in Gue-Ran Ma-Ri",
         "comment": "Leek Added",
-        "tags": ["Leek", "Honey", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Leek",
+            "Honey",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260112_codroe.jpg",
@@ -29,7 +40,11 @@
         "filename": "20260112_codroe.jpg",
         "title": "Cod Roe Gue-Ran Ma-Ri",
         "comment": "Started to try various types of Gue-Ran Ma-Ri",
-        "tags": ["Cod Roe", "Mayo", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Cod Roe",
+            "Mayo",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260115_200922.jpg",
@@ -37,7 +52,10 @@
         "filename": "20260115_200922.jpg",
         "title": "Shrimp Gue-Ran Ma-Ri",
         "comment": "Mashed shrimp Gue-Ran Ma-Ri",
-        "tags": ["Shrimp", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Shrimp",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260117_111419.jpg",
@@ -45,7 +63,10 @@
         "filename": "20260117_111419.jpg",
         "title": "Tomato Sauce Filled Gue-Ran Ma-Ri",
         "comment": "Found a way to consume remaining tomato sauce!",
-        "tags": ["Tomato Sauce", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Tomato Sauce",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260119_191922.jpg",
@@ -53,7 +74,11 @@
         "filename": "20260119_191922.jpg",
         "title": "Tofu & Blueberry Spread Gue-Ran Ma-Ri",
         "comment": "",
-        "tags": ["Tofu", "Blueberry Spread", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Tofu",
+            "Blueberry Spread",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260119_191930.jpg",
@@ -61,7 +86,11 @@
         "filename": "20260119_191930.jpg",
         "title": "Tofu & Blueberry Spread Gue-Ran Ma-Ri",
         "comment": "",
-        "tags": ["Tofu", "Blueberry Spread", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Tofu",
+            "Blueberry Spread",
+            "Gue-Ran Ma-Ri"
+        ]
     },
     {
         "id": "20260119_192226.jpg",
@@ -69,6 +98,17 @@
         "filename": "20260119_192226.jpg",
         "title": "Tofu & Blueberry Spread Gue-Ran Ma-Ri",
         "comment": "Without jam",
-        "tags": ["Tofu", "Gue-Ran Ma-Ri"]
+        "tags": [
+            "Tofu",
+            "Gue-Ran Ma-Ri"
+        ]
+    },
+    {
+        "id": "20260125_Gallery.jpg",
+        "date": "2026-01-25",
+        "filename": "20260125_Gallery.jpg",
+        "title": "Lettuce Soy Gue-Ran Ma-Ri",
+        "comment": "Tried Putting Lettuce",
+        "tags": ["Lettuce", "Soy"]
     }
 ]

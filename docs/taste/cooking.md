@@ -4,6 +4,18 @@
 
 ---
 
+### 📅 2026-01-25 : Lettuce Soy Gue-Ran Ma-Ri
+
+![Lettuce Soy Gue-Ran Ma-Ri](images/food/20260125_Gallery.jpg)
+
+> 📝 **Note**: Tried Putting Lettuce
+
+**Tags**: `#Lettuce` `#Soy`
+
+<br>
+
+---
+
 ### 📅 2026-01-19 : Tofu & Blueberry Spread Gue-Ran Ma-Ri
 
 ![Tofu & Blueberry Spread Gue-Ran Ma-Ri](images/food/20260119_192226.jpg)
