@@ -1,0 +1,75 @@
+/* =========================================
+   1. 메인 페이지 (Home) 전용 스타일
+   (body 태그에 .is-home 클래스가 있을 때만 적용)
+   ========================================= */
+
+/* 배경 투명화 (물고기 보이게) */
+body.is-home .md-main, 
+body.is-home .md-content, 
+body.is-home .md-container {
+    background: transparent !important;
+}
+
+/* 헤더(메뉴바) - 홈에서만 심해색/투명 */
+body.is-home .md-header {
+    background-color: rgba(13, 27, 42, 0.85) !important;
+    box-shadow: none !important;
+}
+
+/* 텍스트 색상 - 홈에서만 흰색 강제 */
+body.is-home .md-typeset h1,
+body.is-home .md-typeset h2,
+body.is-home .md-typeset h3,
+body.is-home .md-typeset h4,
+body.is-home .md-typeset h5,
+body.is-home .md-typeset h6 {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+    text-align: center;
+}
+
+body.is-home .md-typeset p, 
+body.is-home .md-typeset li {
+    color: #e0e0e0 !important;
+}
+
+/* 홈 화면 제목 위치 조정 */
+body.is-home .md-typeset h1 {
+    margin-top: 20vh;
+}
+
+/* 홈 화면 여백 제거 */
+body.is-home .md-content__inner {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+
+/* =========================================
+   2. 다른 페이지 (Projects, Quiz 등) 복구
+   (여기는 건드리지 않으므로 기본 테마를 따름)
+   ========================================= */
+   
+/* 만약 다른 페이지에서도 헤더 색을 Home과 통일하고 싶다면 아래 주석을 해제하세요. 
+   지금은 주석처리해서 기본 초록색(Teal)이 나옵니다. */
+/*
+.md-header {
+    background-color: #0d1b2a !important; 
+}
+*/
+
+/* =========================================
+   3. 네비게이션 바 커스텀 (우측 메뉴 분리)
+   ========================================= */
+
+/* 현재 순서: 1.Home / 2.Projects / 3.Study / 4.AAR / 5.Taste
+   
+   4번째 항목인 'AAR'에게 왼쪽 여백(margin-left: auto)을 주면,
+   3번(Study)과 4번(AAR) 사이가 벌어지면서
+   4번과 그 뒤에 있는 5번(Taste)이 통째로 오른쪽 끝으로 이동합니다.
+*/
+@media screen and (min-width: 76.25em) {
+    .md-tabs__list > li:nth-child(4) {
+        margin-left: auto;
+    }
+}
