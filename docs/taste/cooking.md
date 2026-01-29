@@ -1,6 +1,6 @@
 # Algorithm of Taste - Cooking Log
 
-데이터 기반으로 자동 생성된 요리 기록입니다.
+Automated process once a new picture is added
 
 ---
 

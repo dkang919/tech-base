@@ -22,3 +22,6 @@ Set-ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\activate
 
 mkdocs serve
+
+
+python -m mkdocs serve
