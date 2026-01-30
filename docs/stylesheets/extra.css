@@ -10,7 +10,7 @@ body.is-home .md-container {
     background: transparent !important;
 }
 
-/* 헤더(메뉴바) - 홈에서만 심해색/투명 */
+/* 헤더(메뉴바) - 홈에서만 반투명 심해색 */
 body.is-home .md-header {
     background-color: rgba(13, 27, 42, 0.85) !important;
     box-shadow: none !important;
@@ -46,27 +46,37 @@ body.is-home .md-content__inner {
 
 
 /* =========================================
-   2. 다른 페이지 (Projects, Quiz 등) 복구
-   (여기는 건드리지 않으므로 기본 테마를 따름)
+   2. 글로벌 헤더 & 탭바 스타일 (완전 통일 적용)
+   (모든 페이지에 공통 적용되는 Deep Navy 스타일)
    ========================================= */
-   
-/* 만약 다른 페이지에서도 헤더 색을 Home과 통일하고 싶다면 아래 주석을 해제하세요. 
-   지금은 주석처리해서 기본 초록색(Teal)이 나옵니다. */
-/*
+
+/* 상단 헤더 (로고 영역) - 배경색과 동일하게 */
 .md-header {
-    background-color: #0d1b2a !important; 
+    background-color: #0d1b2a !important;
 }
-*/
+
+/* 네비게이션 탭 (메뉴 영역) - 배경색과 동일하게 */
+/* 이 설정이 있어야 녹색 줄이 사라지고 완벽하게 합쳐집니다 */
+.md-tabs {
+    background-color: #0d1b2a !important;
+}
+
+/* 검색창 커스텀 - 배경이 어두우므로 입력창을 살짝 밝혀 가시성 확보 */
+.md-search__input {
+    background-color: #1b263b !important; /* 한 톤 밝은 네이비 */
+    border-color: #1b263b !important;
+}
+.md-search__input:hover {
+    background-color: #25334d !important; /* 호버 시 더 밝게 */
+}
+
 
 /* =========================================
    3. 네비게이션 바 커스텀 (우측 메뉴 분리)
    ========================================= */
 
 /* 현재 순서: 1.Home / 2.Projects / 3.Study / 4.AAR / 5.Taste
-   
-   4번째 항목인 'AAR'에게 왼쪽 여백(margin-left: auto)을 주면,
-   3번(Study)과 4번(AAR) 사이가 벌어지면서
-   4번과 그 뒤에 있는 5번(Taste)이 통째로 오른쪽 끝으로 이동합니다.
+   4번째 항목인 'AAR'에게 왼쪽 여백(margin-left: auto)을 주어 분리
 */
 @media screen and (min-width: 76.25em) {
     .md-tabs__list > li:nth-child(4) {
