@@ -63,7 +63,7 @@ nav:
     - Finished:
           - Canada IEC Monitor: projects/iec-monitor.md
   - Study:
-      - Notes: study/notes.md
+      - Practice with Gemini: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
       - A/B Testing: study/ab-testing.md
       - Logistic Regression: study/logistic_regression.md
