@@ -14,4 +14,4 @@ This project collects and analyzes computer part price data from major Canadian 
 * **Visualization:** Plotly (Interactive Charts)
 
 ## 📊 RAM Price Trend
-*(Insert your chart image here, e.g., `![RAM Trend](../images/ram_price_trend.png)`)*
+![RAM Trend](../images/ram_price_trend.png)
