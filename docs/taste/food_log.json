@@ -109,6 +109,17 @@
         "filename": "20260125_Gallery.jpg",
         "title": "Lettuce Soy Gue-Ran Ma-Ri",
         "comment": "Tried Putting Lettuce",
-        "tags": ["Lettuce", "Soy"]
+        "tags": [
+            "Lettuce",
+            "Soy"
+        ]
+    },
+    {
+        "id": "20260202_125541.jpg",
+        "date": "2026-02-02",
+        "filename": "20260202_125541.jpg",
+        "title": "Decorated Gue-Ran Ma-Ri",
+        "comment": "Plain Gue-Ran Ma-Ri, but then a tablespoon of yellow mustard sauce added",
+        "tags": ["Mustard Sauce", "Decorated"]
     }
 ]

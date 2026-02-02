@@ -1,6 +1,18 @@
 # Algorithm of Taste - Cooking Log
 
-Automated process once a new picture is added
+데이터 기반으로 자동 생성된 요리 기록입니다.
+
+---
+
+### 📅 2026-02-02 : Decorated Gue-Ran Ma-Ri
+
+![Decorated Gue-Ran Ma-Ri](images/food/20260202_125541.jpg)
+
+> 📝 **Note**: Plain Gue-Ran Ma-Ri, but then a tablespoon of yellow mustard sauce added
+
+**Tags**: `#Mustard Sauce` `#Decorated`
+
+<br>
 
 ---
 
