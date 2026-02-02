@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import os
+import re                 # 정규표현식 사용을 위해 추가
+from datetime import datetime # 현재 시간 확인을 위해 추가
 
 def create_category_chart(client, category_sql_name, chart_title, filename, theme_color):
     """
@@ -127,6 +129,37 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     print(f"   Last Data - Mean: {last_mean:.1f}, Median: {last_median:.1f}")
 
 
+def update_markdown_timestamps(md_file_path):
+    """
+    마크다운 파일 내의 이미지 링크 버전(?v=...)을 현재 시간으로 자동 갱신
+    Why: 매번 수동으로 숫자를 바꾸는 번거로움을 없애고, 방문자가 항상 최신 차트를 보게 함.
+    """
+    try:
+        # 1. 현재 시간 생성 (예: 202402021400)
+        new_version = datetime.now().strftime("%Y%m%d%H%M")
+        
+        # 2. 파일 읽기
+        with open(md_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+        # 3. 정규표현식으로 교체 (Regex)
+        # How: .png?v=뒤에 오는 숫자나 문자를 찾아서 현재 시간으로 바꿔치기
+        # 패턴 설명: \.png\?v=([a-zA-Z0-9_]+) -> .png?v= 뒤에 붙은 기존 버전값 탐색
+        # (상대 경로 ../images/ 등도 .png 확장자로 끝나므로 문제없이 동작함)
+        new_content = re.sub(r'\.png\?v=[a-zA-Z0-9_]+', f'.png?v={new_version}', content)
+        
+        # 4. 변경사항이 있으면 저장
+        if content != new_content:
+            with open(md_file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            print(f"✅ Cache busting tags updated in {md_file_path} to: ?v={new_version}")
+        else:
+            print(f"ℹ️ No timestamp tags found in {md_file_path} or already up to date.")
+            
+    except FileNotFoundError:
+        print(f"⚠️ Warning: Could not find markdown file at {md_file_path}. Check the path.")
+
+
 def run_analysis():
     client = bigquery.Client()
     
@@ -160,6 +193,10 @@ def run_analysis():
             filename=t['filename'],
             theme_color=t['color']
         )
+    
+    # [수정됨] 마크다운 파일 경로를 실제 프로젝트 구조에 맞게 변경
+    print("Updating Markdown timestamps...")
+    update_markdown_timestamps("docs/projects/ca-pc-parts-tracker.md")
 
 if __name__ == "__main__":
     run_analysis()

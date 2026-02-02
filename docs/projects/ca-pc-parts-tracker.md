@@ -15,7 +15,8 @@ This project collects and analyzes computer part price data from major Canadian 
 
 ## 📊 Price Trend Charts
 
-![RAM](../images/ram_price_trend.png)
+<!-- cache busting implemented at generate_charts.py -->
+![RAM](../images/ram_price_trend.png) 
 
 ![GPU](../images/gpu_price_trend.png)
 
