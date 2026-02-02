@@ -51,7 +51,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/images/ram_price_trend.png
-          git commit -m "Auto-update: RAM price chart" || exit 0
+          git add docs/images/gpu_price_trend.png
+          git add docs/images/ssd_price_trend.png
+          git commit -m "Auto-update: Price charts" || exit 0
           git push
 
       # 웹사이트 강제 배포 (Deploy)
