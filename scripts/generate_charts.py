@@ -38,8 +38,8 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     df['date'] = pd.to_datetime(df['date']).dt.normalize()
     
     # 일별 평균 계산
-    daily_avg = df.groupby('date')['price'].mean().reset_index()
-    daily_avg = daily_avg.sort_values('date')
+    daily_median = df.groupby('date')['price'].median().reset_index()
+    daily_median = daily_median.sort_values('date')
 
     # 3. 스타일 설정
     plt.rcParams['font.family'] = 'sans-serif'
@@ -51,16 +51,16 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     ax.set_axisbelow(True)
 
     # 4. 플롯 그리기 (파라미터로 받은 색상 적용)
-    ax.plot(daily_avg['date'], daily_avg['price'], 
+    ax.plot(daily_median['date'], daily_median['price'], 
             marker='o', markersize=6, linewidth=2.5, 
             color=theme_color, label='Avg Price')
     
-    ax.fill_between(daily_avg['date'], daily_avg['price'], 
+    ax.fill_between(daily_median['date'], daily_median['price'], 
                     color=theme_color, alpha=0.1)
 
     # 5. Annotation
-    last_date = daily_avg['date'].iloc[-1]
-    last_price = daily_avg['price'].iloc[-1]
+    last_date = daily_median['date'].iloc[-1]
+    last_price = daily_median['price'].iloc[-1]
     
     ax.annotate(f'Current: ${last_price:,.0f}', 
                 xy=(last_date, last_price), 
@@ -77,8 +77,8 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     ax.set_ylabel('Avg Price (CAD)', fontsize=11, color='gray')
     
     # Dynamic Range Calculation
-    min_price = daily_avg['price'].min()
-    max_price = daily_avg['price'].max()
+    min_price = daily_median['price'].min()
+    max_price = daily_median['price'].max()
     
     # How: 가격대가 다른 GPU($1000+)와 SSD($100)를 모두 수용하기 위해 여백을 동적으로 계산
     margin = (max_price - min_price) * 0.1 if max_price != min_price else 50
