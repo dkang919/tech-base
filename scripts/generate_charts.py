@@ -7,12 +7,10 @@ import os
 
 def create_category_chart(client, category_sql_name, chart_title, filename, theme_color):
     """
-    특정 카테고리에 대한 데이터 조회 및 차트 생성 함수
-    Why: 반복되는 로직(쿼리->가공->플롯->저장)을 함수로 묶어 코드 중복을 제거하고 유지보수성을 높임.
+    Mean(평균)과 Median(중간값)을 동시에 시각화하여 데이터 분포 왜곡을 확인하는 차트 생성
     """
     
-    # 1. SQL: 동적 카테고리 적용
-    # How: f-string을 사용하여 query 내의 category 값을 파라미터로 교체
+    # 1. SQL Query
     query = f"""
     SELECT 
         date,
@@ -29,17 +27,16 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     
     df = client.query(query).to_dataframe()
     
-    # 데이터가 없을 경우 예외 처리
     if df.empty:
         print(f"⚠️ No data found for category: {category_sql_name}")
         return
 
-    # 2. 데이터 전처리
+    # 2. 데이터 전처리 및 집계 (Aggregation)
     df['date'] = pd.to_datetime(df['date']).dt.normalize()
     
-    # 일별 평균 계산
-    daily_median = df.groupby('date')['price'].median().reset_index()
-    daily_median = daily_median.sort_values('date')
+    # Why: 평균과 중간값을 동시에 계산하여 비교
+    daily_stats = df.groupby('date')['price'].agg(['mean', 'median']).reset_index()
+    daily_stats = daily_stats.sort_values('date')
 
     # 3. 스타일 설정
     plt.rcParams['font.family'] = 'sans-serif'
@@ -50,38 +47,57 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     ax.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
     ax.set_axisbelow(True)
 
-    # 4. 플롯 그리기 (파라미터로 받은 색상 적용)
-    ax.plot(daily_median['date'], daily_median['price'], 
-            marker='o', markersize=6, linewidth=2.5, 
-            color=theme_color, label='Avg Price')
+    # 4. 플롯 그리기 (Dual Line)
     
-    ax.fill_between(daily_median['date'], daily_median['price'], 
-                    color=theme_color, alpha=0.1)
+    # Line 1: Mean (평균) - 점선, 보조적인 느낌
+    ax.plot(daily_stats['date'], daily_stats['mean'], 
+            linestyle='--', linewidth=2, alpha=0.7,
+            color=theme_color, label='Mean (Avg)')
+            
+    # Line 2: Median (중간값) - 실선, 메인 데이터 느낌
+    ax.plot(daily_stats['date'], daily_stats['median'], 
+            linestyle='-', marker='o', markersize=5, linewidth=2.5, 
+            color=theme_color, label='Median')
+    
+    # Fill: 시각적 안정감을 위해 Median 아래에 옅은 색 채우기
+    ax.fill_between(daily_stats['date'], daily_stats['median'], 
+                    color=theme_color, alpha=0.05)
 
-    # 5. Annotation
-    last_date = daily_median['date'].iloc[-1]
-    last_price = daily_median['price'].iloc[-1]
+    # 5. Annotation (최신 값 표시)
+    last_date = daily_stats['date'].iloc[-1]
+    last_median = daily_stats['median'].iloc[-1]
+    last_mean = daily_stats['mean'].iloc[-1]
     
-    ax.annotate(f'Current: ${last_price:,.0f}', 
-                xy=(last_date, last_price), 
-                xytext=(0, 15), textcoords='offset points',
-                ha='center', va='bottom',
-                fontsize=11, fontweight='bold', color=theme_color,
+    # How: 두 텍스트가 겹치지 않도록 Median은 위쪽, Mean은 아래쪽(혹은 텍스트만) 배치
+    
+    # Median Annotation (Box Style)
+    ax.annotate(f'Median: ${last_median:,.0f}', 
+                xy=(last_date, last_median), 
+                xytext=(10, 0), textcoords='offset points',
+                ha='left', va='center',
+                fontsize=10, fontweight='bold', color=theme_color,
                 bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=theme_color, alpha=0.9))
+    
+    # Mean Annotation (Simple Text)
+    ax.annotate(f'Mean: ${last_mean:,.0f}', 
+                xy=(last_date, last_mean), 
+                xytext=(10, -15), textcoords='offset points', # 살짝 아래로 배치
+                ha='left', va='top',
+                fontsize=9, color='gray')
 
     # 6. 축 및 레이블 설정
     sns.despine(left=True, bottom=False)
     
     ax.set_title(chart_title, fontsize=18, fontweight='bold', pad=20, loc='left')
-    ax.set_xlabel('')
-    ax.set_ylabel('Avg Price (CAD)', fontsize=11, color='gray')
+    ax.set_ylabel('Price (CAD)', fontsize=11, color='gray')
+    ax.legend(loc='upper left', frameon=False) # 범례 추가
     
-    # Dynamic Range Calculation
-    min_price = daily_median['price'].min()
-    max_price = daily_median['price'].max()
+    # Dynamic Range Calculation (Mean과 Median 전체를 고려)
+    all_prices = pd.concat([daily_stats['mean'], daily_stats['median']])
+    min_price = all_prices.min()
+    max_price = all_prices.max()
     
-    # How: 가격대가 다른 GPU($1000+)와 SSD($100)를 모두 수용하기 위해 여백을 동적으로 계산
-    margin = (max_price - min_price) * 0.1 if max_price != min_price else 50
+    margin = (max_price - min_price) * 0.15 if max_price != min_price else 50
     y_bottom = max(0, min_price - margin)
     y_top = max_price + margin
     
@@ -94,7 +110,7 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
 
     plt.tight_layout()
 
-    # 7. 저장 경로 설정
+    # 7. 저장
     if os.getenv('GITHUB_ACTIONS') == 'true':
         output_dir = "docs/images"
     else:
@@ -104,32 +120,32 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     output_path = os.path.join(output_dir, filename)
     
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
-    plt.close(fig) # 메모리 누수 방지를 위해 명시적으로 닫기
-    print(f"✅ Clean Design Chart generated: {output_path}")
+    plt.close(fig)
+    print(f"✅ Dual-Metric Chart generated: {output_path}")
+
+    # (Optional) 디버깅용: 데이터가 겹치는지 콘솔에서 확인
+    print(f"   Last Data - Mean: {last_mean:.1f}, Median: {last_median:.1f}")
 
 
 def run_analysis():
     client = bigquery.Client()
     
-    # 설정 리스트 (Configuration)
-    # Why: 나중에 카테고리가 추가되거나 색상을 변경할 때 로직을 건드리지 않고 이 리스트만 수정하면 됨.
-    # 주의: DB에 저장된 실제 카테고리명('gpu', 'ssd')이 정확해야 합니다. 다를 경우 수정하세요.
     targets = [
         {
             'sql_name': 'memory', 
-            'title': 'RAM (Memory) Price Trend', 
+            'title': 'RAM Price: Mean vs Median', 
             'filename': 'ram_price_trend.png', 
             'color': '#10B981' # Green
         },
         {
-            'sql_name': 'gpu',      # DB에 저장된 실제 카테고리 값 확인 필요 (예: 'video-card' 일 수도 있음)
-            'title': 'GPU Price Trend', 
+            'sql_name': 'gpu',      
+            'title': 'GPU Price: Mean vs Median', 
             'filename': 'gpu_price_trend.png', 
             'color': '#3B82F6' # Blue
         },
         {
-            'sql_name': 'ssd',      # DB에 저장된 실제 카테고리 값 확인 필요 (예: 'storage' 일 수도 있음)
-            'title': 'SSD Price Trend', 
+            'sql_name': 'ssd',      
+            'title': 'SSD Price: Mean vs Median', 
             'filename': 'ssd_price_trend.png', 
             'color': '#8B5CF6' # Purple
         }

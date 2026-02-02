@@ -13,12 +13,10 @@ This project collects and analyzes computer part price data from major Canadian 
 * **Analysis:** Pandas, Scikit-learn
 * **Visualization:** Plotly (Interactive Charts)
 
-## 📊 RAM Price Trend
+## 📊 Price Trend Charts
 
-![RAM Trend](../images/ram_price_trend.png)
+![RAM](../images/ram_price_trend.png)
 
-## 📊 GPU Price Trend
-![RAM Trend](../images/gpu_price_trend.png)
+![GPU](../images/gpu_price_trend.png)
 
-## 📊 SSD Price Trend
-![RAM Trend](../images/ssd_price_trend.png)
+![SSD](../images/ssd_price_trend.png)
