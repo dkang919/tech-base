@@ -58,7 +58,7 @@ extra_css:
 nav:
   - Home: index.md
   - Canada PC Parts Tracker:
-      - Canada PC Parts Tracker: canada-pc-parts-tracker/ca-pc-parts-tracker.md   
+      - Intro: canada-pc-parts-tracker/ca-pc-parts-tracker.md   
   - Finished Projects:
       - Canada IEC Monitor: finished-projects/iec-monitor.md
   - Study:
