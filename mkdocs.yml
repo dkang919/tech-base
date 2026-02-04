@@ -57,11 +57,10 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Projects:
-    - Ongoing:
-          - Canada PC Parts Tracker: projects/ca-pc-parts-tracker.md   
-    - Finished:
-          - Canada IEC Monitor: projects/iec-monitor.md
+  - Canada PC Parts Tracker:
+      - Canada PC Parts Tracker: canada-pc-parts-tracker/ca-pc-parts-tracker.md   
+  - Finished Projects:
+      - Canada IEC Monitor: finished-projects/iec-monitor.md
   - Study:
       - Practice with Gemini: study/notes.md
       - Evaluation Metrics: study/evaluation_metrics.md
