@@ -75,11 +75,14 @@ body.is-home .md-content__inner {
    3. 네비게이션 바 커스텀 (우측 메뉴 분리)
    ========================================= */
 
-/* 현재 순서: 1.Home / 2.Projects / 3.Study / 4.AAR / 5.Taste
-   4번째 항목인 'AAR'에게 왼쪽 여백(margin-left: auto)을 주어 분리
+/* Dynamic 설정: 메뉴 개수와 상관없이
+   항상 '마지막 2개' 항목을 오른쪽으로 보냅니다.
+   
+   원리: 뒤에서 2번째(nth-last-child(2)) 항목에 
+   왼쪽 여백(auto)을 주면, 그 항목과 마지막 항목이 통째로 우측으로 밀립니다.
 */
 @media screen and (min-width: 76.25em) {
-    .md-tabs__list > li:nth-child(4) {
+    .md-tabs__list > li:nth-last-child(2) {
         margin-left: auto;
     }
 }
