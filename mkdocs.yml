@@ -60,8 +60,7 @@ nav:
   - Canada PC Parts Tracker:
       - Intro: canada-pc-parts-tracker/ca-pc-parts-tracker.md   
   - Daily Table Topics App:
-      - Intro: ""
-      #daily-table-topics-app/daily-table-topics-app.md
+      - Intro: daily-table-topics-app/daily-table-topics-app.md
   - Finished Projects:
       - Canada IEC Monitor (2025-12): finished-projects/iec-monitor.md
   - Study:
