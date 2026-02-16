@@ -7,10 +7,10 @@ This project collects and analyzes computer part price data from major Canadian 
 * **How:** By tracking historical data to predict the optimal purchase timing for key components like GPUs.
 * **Result:** Deriving market insights through data visualization.
 
-## 🛠 Planned Tech Stack
-* **Data Collection:** Python (BeautifulSoup, Selenium)
-* **Storage:** PostgreSQL / Google BigQuery
-* **Analysis:** Pandas, Scikit-learn
+## 🛠 Planned Tech Stack (Python on GCP)
+* **Data Collection:** Python - Selenium to get the data from dynamic page
+* **Storage:** Google BigQuery
+* **Analysis:** Simple Data Aggregation along with the auto-updates
 * **Visualization:** Plotly (Interactive Charts)
 
 ## 📊 Price Trend Charts
