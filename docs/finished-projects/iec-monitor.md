@@ -2,6 +2,8 @@
 
 An automation bot that detects Canada Working Holiday invitation rounds in real-time and sends notifications.
 
+![Flow Chart](../images/Gemini_flowchart_iec-monitor.png) 
+
 ## 💡 Project Background
 * **Why:** Canada Working Holiday invitations are sent out unexpectedly. Checking the official website manually is inefficient.
 * **How:** I built a system that "sends a notification to my phone as soon as a change is detected."
