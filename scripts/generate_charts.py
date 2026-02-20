@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import os
-import re                 # 정규표현식 사용을 위해 추가
+import re                  # 정규표현식 사용을 위해 추가
 from datetime import datetime # 현재 시간 확인을 위해 추가
 
 def create_category_chart(client, category_sql_name, chart_title, filename, theme_color):
@@ -181,6 +181,18 @@ def run_analysis():
             'title': 'SSD Price: Mean vs Median', 
             'filename': 'ssd_price_trend.png', 
             'color': '#8B5CF6' # Purple
+        },
+        {
+            'sql_name': 'motherboard',      
+            'title': 'Motherboard Price: Mean vs Median', 
+            'filename': 'motherboard_price_trend.png', 
+            'color': '#F59E0B' # Orange
+        },
+        {
+            'sql_name': 'drone',      
+            'title': 'Drone Price: Mean vs Median', 
+            'filename': 'drone_price_trend.png', 
+            'color': '#EF4444' # Red
         }
     ]
 

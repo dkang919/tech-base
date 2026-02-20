@@ -21,3 +21,7 @@ This project collects and analyzes computer part price data from major Canadian 
 ![GPU](../images/gpu_price_trend.png)
 
 ![SSD](../images/ssd_price_trend.png)
+
+![Motherboard](../images/motherboard_price_trend.png)
+
+![Drone](../images/drone_price_trend.png) 
