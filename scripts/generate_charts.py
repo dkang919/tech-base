@@ -4,15 +4,16 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import os
-import re                  # 정규표현식 사용을 위해 추가
-from datetime import datetime # 현재 시간 확인을 위해 추가
+import re                  
+from datetime import datetime 
 
-def create_category_chart(client, category_sql_name, chart_title, filename, theme_color):
+def create_category_chart(client, category_sql_name, chart_title, filename, theme_color, extra_sql_filter=""):
     """
-    Mean(평균)과 Median(중간값)을 동시에 시각화하여 데이터 분포 왜곡을 확인하는 차트 생성
+    Mean, Median, and Item Count 시각화
     """
     
     # 1. SQL Query
+    # How: extra_sql_filter를 추가하여 특정 키워드가 포함된 제품만 필터링 (Sub-categorization)
     query = f"""
     SELECT 
         date,
@@ -25,76 +26,85 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     WHERE 
         category = '{category_sql_name}'
         AND date IS NOT NULL
+        {extra_sql_filter}
     """
     
     df = client.query(query).to_dataframe()
     
     if df.empty:
-        print(f"⚠️ No data found for category: {category_sql_name}")
+        print(f"⚠️ No data found for category: {chart_title}")
         return
 
-    # 2. 데이터 전처리 및 집계 (Aggregation)
+    # 2. 데이터 전처리 및 집계
     df['date'] = pd.to_datetime(df['date']).dt.normalize()
     
-    # Why: 평균과 중간값을 동시에 계산하여 비교
-    daily_stats = df.groupby('date')['price'].agg(['mean', 'median']).reset_index()
+    # How: 'count'를 추가하여 해당 일자의 재고(수집된 상품 수) 계산
+    daily_stats = df.groupby('date')['price'].agg(['mean', 'median', 'count']).reset_index()
     daily_stats = daily_stats.sort_values('date')
 
     # 3. 스타일 설정
     plt.rcParams['font.family'] = 'sans-serif'
     plt.rcParams['font.sans-serif'] = ['Arial', 'Helvetica', 'DejaVu Sans']
     
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.set_facecolor('white')
-    ax.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
-    ax.set_axisbelow(True)
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+    ax1.set_facecolor('white')
+    ax1.grid(axis='y', linestyle='--', alpha=0.3, color='gray')
+    ax1.set_axisbelow(True)
 
-    # 4. 플롯 그리기 (Dual Line)
-    
-    # Line 1: Mean (평균) - 점선, 보조적인 느낌
-    ax.plot(daily_stats['date'], daily_stats['mean'], 
+    # 4. 플롯 그리기 (Dual Line for Price)
+    ax1.plot(daily_stats['date'], daily_stats['mean'], 
             linestyle='--', linewidth=2, alpha=0.7,
             color=theme_color, label='Mean (Avg)')
             
-    # Line 2: Median (중간값) - 실선, 메인 데이터 느낌
-    ax.plot(daily_stats['date'], daily_stats['median'], 
+    ax1.plot(daily_stats['date'], daily_stats['median'], 
             linestyle='-', marker='o', markersize=5, linewidth=2.5, 
             color=theme_color, label='Median')
     
-    # Fill: 시각적 안정감을 위해 Median 아래에 옅은 색 채우기
-    ax.fill_between(daily_stats['date'], daily_stats['median'], 
+    ax1.fill_between(daily_stats['date'], daily_stats['median'], 
                     color=theme_color, alpha=0.05)
 
-    # 5. Annotation (최신 값 표시)
+    # 5. Volume Tracking (Bar Chart for Count)
+    # How: twinx()를 사용하여 동일한 X축을 공유하는 두 번째 Y축 생성
+    ax2 = ax1.twinx()
+    ax2.bar(daily_stats['date'], daily_stats['count'], 
+            color='gray', alpha=0.15, width=0.8, label='Item Count')
+    
+    # 차트 배경에 얕게 깔리도록 최대값의 3~4배로 Y축 한도 설정
+    ax2.set_ylim(0, daily_stats['count'].max() * 3.5)
+    ax2.set_ylabel('Available Item Count', fontsize=10, color='gray')
+
+    # 6. Annotation (최신 값 표시)
     last_date = daily_stats['date'].iloc[-1]
     last_median = daily_stats['median'].iloc[-1]
     last_mean = daily_stats['mean'].iloc[-1]
+    last_count = int(daily_stats['count'].iloc[-1])
     
-    # How: 두 텍스트가 겹치지 않도록 Median은 위쪽, Mean은 아래쪽(혹은 텍스트만) 배치
-    
-    # Median Annotation (Box Style)
-    ax.annotate(f'Median: ${last_median:,.0f}', 
+    ax1.annotate(f'Median: ${last_median:,.0f}', 
                 xy=(last_date, last_median), 
                 xytext=(10, 0), textcoords='offset points',
                 ha='left', va='center',
                 fontsize=10, fontweight='bold', color=theme_color,
                 bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=theme_color, alpha=0.9))
     
-    # Mean Annotation (Simple Text)
-    ax.annotate(f'Mean: ${last_mean:,.0f}', 
+    ax1.annotate(f'Mean: ${last_mean:,.0f}\nCount: {last_count}', 
                 xy=(last_date, last_mean), 
-                xytext=(10, -15), textcoords='offset points', # 살짝 아래로 배치
+                xytext=(10, -15), textcoords='offset points', 
                 ha='left', va='top',
                 fontsize=9, color='gray')
 
-    # 6. 축 및 레이블 설정
-    sns.despine(left=True, bottom=False)
+    # 7. 축 및 레이블 설정
+    sns.despine(ax=ax1, left=True, bottom=False, right=False)
+    sns.despine(ax=ax2, left=True, bottom=False, right=True)
     
-    ax.set_title(chart_title, fontsize=18, fontweight='bold', pad=20, loc='left')
-    ax.set_ylabel('Price (CAD)', fontsize=11, color='gray')
-    ax.legend(loc='upper left', frameon=False) # 범례 추가
+    ax1.set_title(chart_title, fontsize=18, fontweight='bold', pad=20, loc='left')
+    ax1.set_ylabel('Price (CAD)', fontsize=11, color='gray')
     
-    # Dynamic Range Calculation (Mean과 Median 전체를 고려)
+    # 범례 병합
+    lines_1, labels_1 = ax1.get_legend_handles_labels()
+    lines_2, labels_2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left', frameon=False) 
+    
+    # Dynamic Range Calculation
     all_prices = pd.concat([daily_stats['mean'], daily_stats['median']])
     min_price = all_prices.min()
     max_price = all_prices.max()
@@ -102,17 +112,15 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     margin = (max_price - min_price) * 0.15 if max_price != min_price else 50
     y_bottom = max(0, min_price - margin)
     y_top = max_price + margin
-    
-    ax.set_ylim(y_bottom, y_top)
+    ax1.set_ylim(y_bottom, y_top)
 
-    # 날짜 포맷
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
-    plt.xticks(rotation=0, fontsize=10)
-    plt.yticks(fontsize=10)
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+    ax1.tick_params(axis='x', rotation=0, labelsize=10)
+    ax1.tick_params(axis='y', labelsize=10)
 
     plt.tight_layout()
 
-    # 7. 저장
+    # 8. 저장
     if os.getenv('GITHUB_ACTIONS') == 'true':
         output_dir = "docs/images"
     else:
@@ -123,32 +131,17 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print(f"✅ Dual-Metric Chart generated: {output_path}")
-
-    # (Optional) 디버깅용: 데이터가 겹치는지 콘솔에서 확인
-    print(f"   Last Data - Mean: {last_mean:.1f}, Median: {last_median:.1f}")
-
+    print(f"✅ Chart generated: {output_path} | Last Count: {last_count}")
 
 def update_markdown_timestamps(md_file_path):
-    """
-    마크다운 파일 내의 이미지 링크 버전(?v=...)을 현재 시간으로 자동 갱신
-    Why: 매번 수동으로 숫자를 바꾸는 번거로움을 없애고, 방문자가 항상 최신 차트를 보게 함.
-    """
+    # (Existing logic remains unchanged)
     try:
-        # 1. 현재 시간 생성 (예: 202402021400)
         new_version = datetime.now().strftime("%Y%m%d%H%M")
-        
-        # 2. 파일 읽기
         with open(md_file_path, 'r', encoding='utf-8') as f:
             content = f.read()
             
-        # 3. 정규표현식으로 교체 (Regex)
-        # How: .png?v=뒤에 오는 숫자나 문자를 찾아서 현재 시간으로 바꿔치기
-        # 패턴 설명: \.png\?v=([a-zA-Z0-9_]+) -> .png?v= 뒤에 붙은 기존 버전값 탐색
-        # (상대 경로 ../images/ 등도 .png 확장자로 끝나므로 문제없이 동작함)
         new_content = re.sub(r'\.png\?v=[a-zA-Z0-9_]+', f'.png?v={new_version}', content)
         
-        # 4. 변경사항이 있으면 저장
         if content != new_content:
             with open(md_file_path, 'w', encoding='utf-8') as f:
                 f.write(new_content)
@@ -159,40 +152,61 @@ def update_markdown_timestamps(md_file_path):
     except FileNotFoundError:
         print(f"⚠️ Warning: Could not find markdown file at {md_file_path}. Check the path.")
 
-
 def run_analysis():
     client = bigquery.Client()
     
+    # How: 'sql_filter' 키를 추가하여 특정 키워드로 데이터를 분리
     targets = [
         {
             'sql_name': 'memory', 
-            'title': 'RAM Price: Mean vs Median', 
+            'title': 'RAM Price Trend', 
             'filename': 'ram_price_trend.png', 
-            'color': '#10B981' # Green
-        },
-        {
-            'sql_name': 'gpu',      
-            'title': 'GPU Price: Mean vs Median', 
-            'filename': 'gpu_price_trend.png', 
-            'color': '#3B82F6' # Blue
+            'color': '#10B981',
+            'sql_filter': ''
         },
         {
             'sql_name': 'ssd',      
-            'title': 'SSD Price: Mean vs Median', 
+            'title': 'SSD Price Trend', 
             'filename': 'ssd_price_trend.png', 
-            'color': '#8B5CF6' # Purple
+            'color': '#8B5CF6',
+            'sql_filter': ''
         },
         {
             'sql_name': 'motherboard',      
-            'title': 'Motherboard Price: Mean vs Median', 
+            'title': 'Motherboard Price Trend', 
             'filename': 'motherboard_price_trend.png', 
-            'color': '#F59E0B' # Orange
+            'color': '#F59E0B',
+            'sql_filter': ''
+        },
+        # Split GPU into High-End and Mid-Range
+        {
+            'sql_name': 'gpu',      
+            'title': 'High-End GPU Price (RTX 4080/4090, RX 7900)', 
+            'filename': 'gpu_high_price_trend.png', 
+            'color': '#1D4ED8', # Dark Blue
+            'sql_filter': "AND (LOWER(name) LIKE '%4090%' OR LOWER(name) LIKE '%4080%' OR LOWER(name) LIKE '%7900%')"
+        },
+        {
+            'sql_name': 'gpu',      
+            'title': 'Mid-Range GPU Price (RTX 4060/4070, RX 7600/7700)', 
+            'filename': 'gpu_mid_price_trend.png', 
+            'color': '#3B82F6', # Light Blue
+            'sql_filter': "AND (LOWER(name) LIKE '%4060%' OR LOWER(name) LIKE '%4070%' OR LOWER(name) LIKE '%7600%' OR LOWER(name) LIKE '%7700%')"
+        },
+        # Split Drones into Pro and Consumer
+        {
+            'sql_name': 'drone',      
+            'title': 'Pro Drone Price (Inspire/Matrice)', 
+            'filename': 'drone_pro_price_trend.png', 
+            'color': '#B91C1C', # Dark Red
+            'sql_filter': "AND (LOWER(name) LIKE '%inspire%' OR LOWER(name) LIKE '%matrice%' OR LOWER(name) LIKE '%mavic 3 pro%')"
         },
         {
             'sql_name': 'drone',      
-            'title': 'Drone Price: Mean vs Median', 
-            'filename': 'drone_price_trend.png', 
-            'color': '#EF4444' # Red
+            'title': 'Consumer Drone Price (Mini/Air)', 
+            'filename': 'drone_consumer_price_trend.png', 
+            'color': '#EF4444', # Light Red
+            'sql_filter': "AND (LOWER(name) LIKE '%mini%' OR LOWER(name) LIKE '%air%')"
         }
     ]
 
@@ -203,10 +217,10 @@ def run_analysis():
             category_sql_name=t['sql_name'],
             chart_title=t['title'],
             filename=t['filename'],
-            theme_color=t['color']
+            theme_color=t['color'],
+            extra_sql_filter=t.get('sql_filter', '')
         )
     
-    # [수정됨] 마크다운 파일 경로를 실제 프로젝트 구조에 맞게 변경
     print("Updating Markdown timestamps...")
     update_markdown_timestamps("docs/projects/ca-pc-parts-tracker.md")
 

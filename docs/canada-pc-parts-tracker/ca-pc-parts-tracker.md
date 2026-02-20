@@ -19,9 +19,13 @@ This project collects and analyzes computer part price data from major Canadian 
 ![RAM](../images/ram_price_trend.png) 
 
 ![GPU](../images/gpu_price_trend.png)
+![GPU - High](../images/gpu_high_price_trend.png)
+![GPU - Mid](../images/gpu_mid_price_trend.png)
 
 ![SSD](../images/ssd_price_trend.png)
 
 ![Motherboard](../images/motherboard_price_trend.png)
 
 ![Drone](../images/drone_price_trend.png) 
+![Drone - Pro](../images/drone_pro_price_trend.png) 
+![Drone - Consumer](../images/drone_consumer_price_trend.png) 
