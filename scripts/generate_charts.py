@@ -9,12 +9,10 @@ from datetime import datetime
 
 def create_category_chart(client, category_sql_name, chart_title, filename, theme_color, extra_sql_filter=""):
     """
-    Mean, Median, Item Count 시각화 (가격 기준 필터링 적용)
+    Mean, Median, Item Count 시각화 (라벨 겹침 방지 및 상단 배치 버전)
     """
     
     # 1. SQL Query
-    # How: WITH 구문(CTE)을 사용하여 가격을 먼저 숫자(FLOAT64)로 변환한 뒤,
-    # 바깥쪽 쿼리에서 변환된 'price' 값을 기준으로 범위를 필터링함.
     query = f"""
     WITH parsed_data AS (
         SELECT 
@@ -70,55 +68,65 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     ax2 = ax1.twinx()
     ax2.bar(daily_stats['date'], daily_stats['count'], 
             color='gray', alpha=0.15, width=0.8, label='Item Count')
-    ax2.set_ylim(0, daily_stats['count'].max() * 3.5)
+    ax2.set_ylim(0, daily_stats['count'].max() * 4) # 배경처럼 깔리게 더 낮춤
     ax2.set_ylabel('Available Item Count', fontsize=10, color='gray')
 
-    # 6. Annotation 
+    # 6. Annotation (라벨 겹침 방지 로직 적용)
     last_date = daily_stats['date'].iloc[-1]
     last_median = daily_stats['median'].iloc[-1]
     last_mean = daily_stats['mean'].iloc[-1]
     last_count = int(daily_stats['count'].iloc[-1])
     
+    # How: Median은 항상 포인트 바로 위에 박스 형태로 배치
     ax1.annotate(f'Median: ${last_median:,.0f}', 
                 xy=(last_date, last_median), 
-                xytext=(10, 0), textcoords='offset points',
-                ha='left', va='center',
+                xytext=(0, 15), textcoords='offset points',
+                ha='center', va='bottom',
                 fontsize=10, fontweight='bold', color=theme_color,
                 bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=theme_color, alpha=0.9))
     
+    # How: Mean과 Median이 겹치지 않도록 Mean의 위치를 상대적으로 조정
+    # Mean이 Median보다 높으면 더 위로, 낮으면 아래로 배치
+    if last_mean > last_median:
+        mean_offset = 45 # Median 박스보다 더 위로
+        mean_va = 'bottom'
+    else:
+        mean_offset = -30 # 포인트 아래로
+        mean_va = 'top'
+
     ax1.annotate(f'Mean: ${last_mean:,.0f}\nCount: {last_count}', 
                 xy=(last_date, last_mean), 
-                xytext=(10, -15), textcoords='offset points', 
-                ha='left', va='top',
-                fontsize=9, color='gray')
+                xytext=(0, mean_offset), textcoords='offset points', 
+                ha='center', va=mean_va,
+                fontsize=9, color='gray', fontweight='semibold')
 
     # 7. 축 및 레이블 설정
     sns.despine(ax=ax1, left=True, bottom=False, right=False)
     sns.despine(ax=ax2, left=True, bottom=False, right=True)
     
-    ax1.set_title(chart_title, fontsize=18, fontweight='bold', pad=20, loc='left')
+    ax1.set_title(chart_title, fontsize=18, fontweight='bold', pad=30, loc='left')
     ax1.set_ylabel('Price (CAD)', fontsize=11, color='gray')
     
     lines_1, labels_1 = ax1.get_legend_handles_labels()
     lines_2, labels_2 = ax2.get_legend_handles_labels()
     ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left', frameon=False) 
     
+    # Y축 범위 최적화 (텍스트 라벨이 들어갈 공간 확보)
     all_prices = pd.concat([daily_stats['mean'], daily_stats['median']])
     min_price = all_prices.min()
     max_price = all_prices.max()
     
-    margin = (max_price - min_price) * 0.15 if max_price != min_price else 50
-    y_bottom = max(0, min_price - margin)
-    y_top = max_price + margin
-    ax1.set_ylim(y_bottom, y_top)
+    margin_bottom = (max_price - min_price) * 0.2
+    margin_top = (max_price - min_price) * 0.4 # 상단 텍스트 공간을 위해 더 넓게 잡음
+    
+    ax1.set_ylim(max(0, min_price - margin_bottom), max_price + margin_top)
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
-    ax1.tick_params(axis='x', rotation=0, labelsize=10)
-    ax1.tick_params(axis='y', labelsize=10)
+    plt.xticks(rotation=0)
 
     plt.tight_layout()
 
-    # 8. 저장
+    # 8. 저장 로직 (기존과 동일)
     if os.getenv('GITHUB_ACTIONS') == 'true':
         output_dir = "docs/images"
     else:
@@ -129,7 +137,7 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     
     plt.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print(f"✅ Chart generated: {output_path} | Last Count: {last_count}")
+    print(f"✅ 개선된 차트 생성 완료: {output_path}")
 
 def update_markdown_timestamps(md_file_path):
     try:
