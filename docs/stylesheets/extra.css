@@ -80,9 +80,16 @@ body.is-home .md-content__inner {
    
    원리: 뒤에서 2번째(nth-last-child(2)) 항목에 
    왼쪽 여백(auto)을 주면, 그 항목과 마지막 항목이 통째로 우측으로 밀립니다.
-*/
+
 @media screen and (min-width: 76.25em) {
     .md-tabs__list > li:nth-last-child(1) {
+        margin-left: auto;
+    }
+}
+
+*/
+@media screen and (min-width: 76.25em) {
+    .md-tabs__list > li:last-child {
         margin-left: auto;
     }
 }
