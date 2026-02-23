@@ -71,12 +71,11 @@ nav:
       - Decision Trees: study/decision_tree.md
       - Random Forest: study/random_forest.md
       - Principal Component Analysis: study/pca.md
+      - K - Means: study/k-means.md
       - Flash Cards: study/quiz/ml-quiz.md
 
   - After Action Review (AAR):  
       - 2026 Speech Contest: "aar/2026-01-21.md"
-  - My Cooking Log:  
-      - Food: "taste/cooking.md"
 
 extra:
   social:
