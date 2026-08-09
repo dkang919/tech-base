@@ -1,0 +1,65 @@
+name: Deploy site
+
+# 사이트 배포는 이 워크플로 하나로만 한다.
+# gh-pages 브랜치에 force-push 하던 옛 방식(legacy)을 대체한다.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  # Why: sync_journal / update_data 가 커밋한 뒤 배포를 이어가려면 필요하다.
+  #      GITHUB_TOKEN으로 만든 push는 다른 워크플로를 발동시키지 않기 때문에,
+  #      push 이벤트에 기대지 않고 이 워크플로를 직접 호출한다.
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Why: 배포가 겹치지 않게 직렬화한다. 옛 방식에서 force-push가 서로를 취소시켜
+#      "Page build failed"가 반복되던 문제를 여기서 구조적으로 막는다.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Why: workflow_call 로 불릴 때 github.sha 는 "호출한 워크플로를 깨운
+          #      커밋"이라, 그 직후 봇이 새로 push한 내용이 빠진다.
+          #      항상 main 최신을 배포하도록 브랜치를 명시한다.
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install mkdocs-material
+
+      # --strict 는 링크 깨짐 등을 배포 전에 잡는다.
+      # 실패하면 사이트가 갱신되지 않으므로, 빨간 X가 뜨면 로그를 볼 것.
+      - name: Build site
+        run: mkdocs build --strict
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

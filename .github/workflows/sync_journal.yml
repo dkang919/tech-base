@@ -53,12 +53,16 @@ jobs:
           git push
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      # Why: GITHUB_TOKEN으로 한 push는 다른 워크플로를 발동시키지 않는다.
-      #      (워크플로가 서로를 무한히 깨우는 것을 막는 GitHub 정책)
-      #      따라서 publish.yml 이 깨어나지 않으므로 여기서 직접 배포한다.
-      #      update_data.yml 도 같은 이유로 같은 방식을 쓰고 있다.
-      - name: Deploy site
-        if: steps.commit.outputs.changed == 'true'
-        run: |
-          pip install mkdocs-material
-          mkdocs gh-deploy --force
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+
+  # Why: GITHUB_TOKEN으로 한 push는 다른 워크플로를 발동시키지 않으므로
+  #      deploy.yml 의 push 트리거에 기댈 수 없다. 직접 호출한다.
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
