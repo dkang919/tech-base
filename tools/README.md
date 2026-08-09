@@ -152,5 +152,23 @@ python -m mkdocs build --strict
   그대로 넣으면 한 시간쯤 뒤에 깨진다. 지금은 본문에서 빼고
   `<!-- TODO: image 미동기화 -->` 주석만 남긴다.
   나중에 파일을 내려받아 레포에 저장하는 단계를 추가해야 한다.
-- **GitHub Actions 미연동.** 지금은 로컬에서 수동 실행한다.
+## 자동 실행 (GitHub Actions)
+
+`.github/workflows/sync_journal.yml` 이 매일 1회(UTC 21:00) 돌고,
+Actions 탭에서 **Run workflow** 버튼으로 즉시 실행할 수도 있다.
+
+**Notion이 변경을 밀어주는 방식이 아니라, 정해진 시각에 우리가 물어보는(polling)
+방식**이다. 글을 발행한 직후 바로 올리고 싶으면 수동 버튼을 쓴다.
+
+동작하려면 repo secret 2개가 필요하다
+(Settings → Secrets and variables → Actions → New repository secret):
+
+| 이름 | 값 |
+|---|---|
+| `NOTION_TOKEN` | Notion integration secret |
+| `NOTION_DATABASE_ID` | Journal 데이터베이스 ID |
+
+변경이 없으면 커밋하지 않고 조용히 끝난다.
+변경이 있으면 `docs/journal` 만 커밋하고 push하며,
+그 push가 `publish.yml` 을 깨워 사이트가 다시 배포된다.
   자동화하려면 `NOTION_TOKEN` 을 repo secret으로 넣고 워크플로를 추가하면 된다.

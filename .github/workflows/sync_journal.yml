@@ -1,0 +1,48 @@
+name: Sync Journal from Notion
+
+on:
+  schedule:
+    # UTC 21:00 = 캐나다 EDT 17:00 / EST 16:00 (매일 1회)
+    - cron: '0 21 * * *'
+  workflow_dispatch: # 수동 실행 버튼
+
+# Why: 동시에 두 번 돌면 같은 파일을 두고 push가 충돌한다.
+concurrency:
+  group: sync-journal
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Why: 전체 requirements.txt는 BigQuery/matplotlib까지 들어있어 느리다.
+      #      이 워크플로에 실제로 필요한 건 두 개뿐.
+      - name: Install dependencies
+        run: pip install requests PyYAML
+
+      - name: Sync from Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: python tools/sync_journal.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/journal
+          # 변경이 없으면 여기서 조용히 끝난다 (실패가 아님)
+          git diff --cached --quiet && echo "변경 없음" && exit 0
+          git commit -m "Auto-sync: journal from Notion"
+          git push

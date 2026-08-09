@@ -237,6 +237,24 @@ def rich_text_to_md(rich):
 LIST_TYPES = ("bulleted_list_item", "numbered_list_item", "to_do")
 
 
+def soft_breaks(text, pad="", inline=False):
+    """
+    문단 안의 줄바꿈(Shift+Enter)을 마크다운 줄바꿈으로 살린다.
+
+    Why: 마크다운은 홑 줄바꿈을 공백으로 취급해서, 노션에서 줄이 나뉘어 보이던
+         문장들이 사이트에서는 한 문단으로 쭉 이어져 버린다.
+    How: <br> 을 명시적으로 넣는다. 줄 끝 공백 2칸 방식은 눈에 보이지 않아
+         편집기가 지워버리기 쉬우므로 쓰지 않는다.
+    """
+    if "\n" not in text:
+        return text
+    parts = text.split("\n")
+    if inline:
+        # 리스트 항목은 한 줄로 유지해야 목록 구조가 깨지지 않는다
+        return "<br>".join(parts)
+    return f"<br>\n{pad}".join(parts)
+
+
 def blocks_to_md(nc, block_id, depth=0):
     """
     블록 트리를 재귀적으로 마크다운으로 변환한다.
@@ -261,18 +279,19 @@ def blocks_to_md(nc, block_id, depth=0):
 
         if t == "paragraph":
             if text:
-                chunk.append(pad + text)
+                chunk.append(pad + soft_breaks(text, pad))
         elif t in ("heading_1", "heading_2", "heading_3"):
-            chunk.append(f"{'#' * int(t[-1])} {text}")
+            chunk.append(f"{'#' * int(t[-1])} {text.replace(chr(10), ' ')}")
         elif t == "bulleted_list_item":
-            chunk.append(f"{pad}- {text}")
+            chunk.append(f"{pad}- {soft_breaks(text, inline=True)}")
             kids = depth + 1
         elif t == "numbered_list_item":
             numbering = numbering + 1 if prev == "numbered_list_item" else 1
-            chunk.append(f"{pad}{numbering}. {text}")
+            chunk.append(f"{pad}{numbering}. {soft_breaks(text, inline=True)}")
             kids = depth + 1
         elif t == "to_do":
-            chunk.append(f"{pad}- [{'x' if data.get('checked') else ' '}] {text}")
+            mark = "x" if data.get("checked") else " "
+            chunk.append(f"{pad}- [{mark}] {soft_breaks(text, inline=True)}")
             kids = depth + 1
         elif t == "quote":
             chunk.extend(f"{pad}> {ln}" for ln in (text or "").split("\n"))
@@ -551,14 +570,20 @@ def rebuild_indexes(dry_run=False):
 
 
 def managed_files():
-    """docs/journal 아래에서 notion_id를 가진 파일만 관리 대상으로 본다."""
-    found = {}
+    """
+    docs/journal 아래에서 notion_id를 가진 파일만 관리 대상으로 본다.
+
+    Why: 같은 notion_id가 두 경로에 있을 수 있어(노션에서 Date를 바꾼 경우)
+         dict가 아니라 목록으로 돌려준다. dict로 만들면 한쪽이 조용히 사라져
+         고아 파일을 못 지운다.
+    """
+    found = []
     if not JOURNAL_DIR.exists():
         return found
     for p in JOURNAL_DIR.rglob("*.md"):
         nid = read_frontmatter(p).get("notion_id")
         if nid:
-            found[normalize_id(str(nid))] = p
+            found.append((normalize_id(str(nid)), p))
     return found
 
 
@@ -587,9 +612,12 @@ def sync(dry_run=False):
     print(f"  {PROP_VISIBILITY}={PUBLIC_VALUE} 페이지: {len(pages)}건")
 
     seen, created, updated, unchanged = set(), [], [], []
+    expected = {}   # notion_id -> 이 글이 있어야 할 경로
     for page in pages:
         meta = extract_meta(page)
-        seen.add(normalize_id(meta["notion_id"]))
+        nid = normalize_id(meta["notion_id"])
+        seen.add(nid)
+        expected[nid] = target_path(meta["date"])
 
         ko, en = split_sections(blocks_to_md(nc, page["id"]))
         content = render_markdown(meta, ko, en)
@@ -618,14 +646,16 @@ def sync(dry_run=False):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding="utf-8", newline="\n")
 
-    # reconcile: Public에서 빠진 관리 대상 파일 삭제
+    # reconcile: Public에서 빠졌거나, 날짜가 바뀌어 경로가 옮겨간 파일 삭제
     removed = []
-    for nid, path in managed_files().items():
-        if nid not in seen:
-            rel = path.relative_to(REPO_ROOT).as_posix()
-            removed.append(rel)
-            if not dry_run:
-                path.unlink()
+    for nid, path in managed_files():
+        if nid in seen and path == expected.get(nid):
+            continue
+        why = "Public 해제" if nid not in seen else "날짜 변경으로 이동"
+        rel = path.relative_to(REPO_ROOT).as_posix()
+        removed.append(f"{rel}  ({why})")
+        if not dry_run:
+            path.unlink()
 
     # 글이 확정된 뒤에 인덱스를 다시 만든다(삭제분까지 반영되도록)
     indexes = rebuild_indexes(dry_run)
