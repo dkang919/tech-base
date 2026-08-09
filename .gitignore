@@ -13,6 +13,15 @@ __pycache__/
 # MkDocs 빌드 결과물 (이건 깃허브에 올릴 필요 없음)
 site/
 
+# 비밀정보 (NOTION_TOKEN 등)
+# 주의: 위의 `.env/`는 디렉터리만 막는다. 파일을 막으려면 슬래시 없는 패턴이 필요하다.
+.env
+.env.*
+!.env.example
+
+# 임시 확인/디버깅 스크립트 전용 폴더 (핵심 코드와 섞지 않는다)
+tools/debug/
+
 # 운영체제/에디터 잡동사니
 .DS_Store
 .vscode/
