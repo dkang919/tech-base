@@ -17,9 +17,11 @@ Notion에 쓴 일기 · 잡글 · 아이디어 중 **Public으로 발행한 글�
 
 ## 월별 보기
 
+<!-- sync:auto:start -->
 ### 2026
 
-- [2026-08](2026/2026-08/index.md)
+- [2026-08](2026/2026-08/index.md) — 1편
+<!-- sync:auto:end -->
 
 ---
 
@@ -47,12 +49,11 @@ docs/journal/
         └── 2026-08-09.md           ← 일자 글
 ```
 
-새 글을 추가할 때 필요한 최소 규칙은 3가지뿐입니다.
+새 글을 추가할 때 필요한 규칙은 하나뿐입니다.
 
-1. 파일 경로는 `docs/journal/YYYY/YYYY-MM/YYYY-MM-DD.md`
-2. 새 달이 시작되면 그 달 폴더에 `index.md`를 만든다
-3. 새 달을 만들었으면 이 페이지의 **월별 보기** 목록에 한 줄 추가한다
+- 파일 경로는 `docs/journal/YYYY/YYYY-MM/YYYY-MM-DD.md`
 
+월 인덱스와 위 **월별 보기** 목록은 `tools/sync_journal.py` 가 자동으로 다시 씁니다.
 `mkdocs.yml`은 건드릴 필요가 없습니다.
 
 Notion에서 `Visibility=Public` 으로 발행한 글은 `tools/sync_journal.py` 가

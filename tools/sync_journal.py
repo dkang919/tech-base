@@ -71,6 +71,12 @@ PUBLIC_VALUE = os.getenv("NOTION_PUBLIC_VALUE", "Public")
 SECTION_KO = re.compile(r"^\s*(한국어|한글|korean|ko)\b", re.I)
 SECTION_EN = re.compile(r"^\s*(english|영어|en)\b", re.I)
 
+# 인덱스에서 스크립트가 관리하는 구간. 이 밖의 내용은 절대 건드리지 않는다.
+MARK_START = "<!-- sync:auto:start -->"
+MARK_END = "<!-- sync:auto:end -->"
+
+ENTRY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.md$")
+
 TAB_LABEL = {
     ("ko", True): "한국어 (원문)",
     ("ko", False): "한국어 (번역)",
@@ -445,6 +451,105 @@ def extract_meta(page):
     }
 
 
+def replace_marked_region(path, body_lines, template, dry_run):
+    """
+    파일의 MARK_START~MARK_END 사이만 갈아끼운다.
+
+    Why: 월 인덱스에는 사람이 쓴 회고나 메모가 들어갈 수 있다. 파일 전체를
+         덮어쓰면 그게 매번 날아가므로, 자동 관리 구간을 마커로 격리한다.
+    """
+    block = [MARK_START] + body_lines + [MARK_END]
+
+    if path.exists():
+        text = path.read_text(encoding="utf-8")
+        if MARK_START not in text or MARK_END not in text:
+            # 마커가 없는 파일은 사람이 통째로 관리하는 것으로 보고 손대지 않는다
+            print(f"  ! {path.relative_to(REPO_ROOT).as_posix()} 에 마커가 없어 건너뜁니다.")
+            return None
+        head = text.split(MARK_START)[0]
+        tail = text.split(MARK_END, 1)[1]
+        new = head + "\n".join(block) + tail
+    else:
+        new = template.replace("__AUTO__", "\n".join(block))
+
+    if path.exists() and path.read_text(encoding="utf-8") == new:
+        return False
+    if not dry_run:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(new, encoding="utf-8", newline="\n")
+    return True
+
+
+def entry_title(path):
+    """일자 글의 제목. frontmatter title이 없으면 날짜를 쓴다."""
+    return str(read_frontmatter(path).get("title") or path.stem)
+
+
+MONTH_TEMPLATE = """---
+title: "__YM__"
+---
+
+# __YM__
+
+[← Journal Overview](../../index.md)
+
+---
+
+## 글 목록
+
+__AUTO__
+"""
+
+OVERVIEW_MARKER_HINT = (
+    "docs/journal/index.md 에 마커가 없습니다. "
+    f"월 목록을 자동 관리하려면 그 자리에 {MARK_START} / {MARK_END} 를 넣으세요."
+)
+
+
+def rebuild_indexes(dry_run=False):
+    """
+    디스크에 있는 일자 글을 기준으로 월 인덱스와 Overview의 월 목록을 다시 만든다.
+
+    Why: Notion에서 온 글과 손으로 쓴 글이 섞여도 목록이 빠지지 않게 하려면
+         Notion 응답이 아니라 실제 파일을 기준으로 삼아야 한다.
+    """
+    changed = []
+    months = {}   # "2026-08" -> [Path, ...]
+
+    for entry in JOURNAL_DIR.rglob("*.md"):
+        if not ENTRY_RE.match(entry.name):
+            continue
+        months.setdefault(entry.stem[:7], []).append(entry)
+
+    for ym in sorted(months):
+        entries = sorted(months[ym], key=lambda p: p.stem, reverse=True)
+        lines = [f"- [{p.stem}]({p.name}) — {entry_title(p)}" for p in entries]
+        path = JOURNAL_DIR / ym[:4] / ym / "index.md"
+        r = replace_marked_region(
+            path, lines, MONTH_TEMPLATE.replace("__YM__", ym), dry_run
+        )
+        if r:
+            changed.append(path.relative_to(REPO_ROOT).as_posix())
+
+    # Overview의 연/월 목록
+    overview = JOURNAL_DIR / "index.md"
+    if overview.exists():
+        lines = []
+        for year in sorted({ym[:4] for ym in months}, reverse=True):
+            lines.append(f"### {year}")
+            lines.append("")
+            for ym in sorted([m for m in months if m.startswith(year)], reverse=True):
+                lines.append(f"- [{ym}]({year}/{ym}/index.md) — {len(months[ym])}편")
+            lines.append("")
+        r = replace_marked_region(overview, lines[:-1] if lines else [], "", dry_run)
+        if r is None:
+            print(f"  ! {OVERVIEW_MARKER_HINT}")
+        elif r:
+            changed.append(overview.relative_to(REPO_ROOT).as_posix())
+
+    return changed
+
+
 def managed_files():
     """docs/journal 아래에서 notion_id를 가진 파일만 관리 대상으로 본다."""
     found = {}
@@ -522,16 +627,19 @@ def sync(dry_run=False):
             if not dry_run:
                 path.unlink()
 
+    # 글이 확정된 뒤에 인덱스를 다시 만든다(삭제분까지 반영되도록)
+    indexes = rebuild_indexes(dry_run)
+
     tag = "[dry-run] " if dry_run else ""
     for label, items in (
         ("created", created), ("updated", updated),
-        ("removed", removed), ("unchanged", unchanged),
+        ("removed", removed), ("index 갱신", indexes), ("unchanged", unchanged),
     ):
         if items:
             print(f"  {tag}{label} {len(items)}건")
             for i in items:
                 print(f"    - {i}")
-    if not (created or updated or removed):
+    if not (created or updated or removed or indexes):
         print(f"  {tag}변경 없음")
     return 0
 
