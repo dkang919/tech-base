@@ -38,11 +38,27 @@ jobs:
         run: python tools/sync_journal.py
 
       - name: Commit and push if changed
+        id: commit
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/journal
           # 변경이 없으면 여기서 조용히 끝난다 (실패가 아님)
-          git diff --cached --quiet && echo "변경 없음" && exit 0
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git commit -m "Auto-sync: journal from Notion"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # Why: GITHUB_TOKEN으로 한 push는 다른 워크플로를 발동시키지 않는다.
+      #      (워크플로가 서로를 무한히 깨우는 것을 막는 GitHub 정책)
+      #      따라서 publish.yml 이 깨어나지 않으므로 여기서 직접 배포한다.
+      #      update_data.yml 도 같은 이유로 같은 방식을 쓰고 있다.
+      - name: Deploy site
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          pip install mkdocs-material
+          mkdocs gh-deploy --force

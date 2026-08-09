@@ -169,6 +169,16 @@ Actions 탭에서 **Run workflow** 버튼으로 즉시 실행할 수도 있다.
 | `NOTION_DATABASE_ID` | Journal 데이터베이스 ID |
 
 변경이 없으면 커밋하지 않고 조용히 끝난다.
-변경이 있으면 `docs/journal` 만 커밋하고 push하며,
-그 push가 `publish.yml` 을 깨워 사이트가 다시 배포된다.
+변경이 있으면 `docs/journal` 만 커밋·push한 뒤 **같은 워크플로 안에서
+`mkdocs gh-deploy` 까지 실행**한다.
+
+!!! warning "publish.yml 에 의존하지 않는 이유"
+    GitHub는 `GITHUB_TOKEN` 으로 만든 push 로는 다른 워크플로를 발동시키지
+    않는다(워크플로끼리 무한히 서로를 깨우는 것을 막는 정책). 따라서 이
+    워크플로가 커밋해도 `publish.yml` 은 깨어나지 않는다.
+    그래서 배포를 직접 수행한다. `update_data.yml` 도 같은 이유로 같은 구조다.
+
+    이때 `pages build and deployment` 를 수동으로 돌려도 소용이 없다.
+    그것은 `gh-pages` 브랜치에 **이미 올라간** 내용을 다시 게시할 뿐이라,
+    `mkdocs gh-deploy` 가 실행되지 않았다면 옛 사이트가 그대로 다시 올라간다.
   자동화하려면 `NOTION_TOKEN` 을 repo secret으로 넣고 워크플로를 추가하면 된다.
