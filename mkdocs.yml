@@ -1,31 +1,21 @@
 site_name: DK Tech Base
-site_url: https://github.com/dkang919/
+# 실제 사이트 주소. canonical 링크와 sitemap.xml이 이 값을 쓴다.
+site_url: https://dkang919.github.io/tech-base/
 repo_url: https://github.com/dkang919/tech-base
 repo_name: GitHub
 
 theme:
   name: material
-  palette: 
+  palette:
     - scheme: default # 라이트 모드
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - scheme: slate # 다크 모드theme:
-  name: material
-  # (기존 palette 설정 유지하되, 아래 속성 추가)
-  palette: 
-    - scheme: default
       primary: teal   # 추천: teal, indigo, slate, black
       accent: purple  # 버튼 등 포인트 컬러
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate
+    - scheme: slate   # 다크 모드
       primary: teal
       accent: purple
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
       toggle:
         icon: material/brightness-4
         name: Switch to light mode

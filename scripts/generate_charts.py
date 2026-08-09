@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import os
-import re                  
-from datetime import datetime 
+
+# 이 파일은 scripts/ 안에 있으므로 한 단계 위가 레포 루트다.
+# Why: 실행 위치나 OS에 상관없이 같은 곳에 저장/수정하기 위함.
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def create_category_chart(client, category_sql_name, chart_title, filename, theme_color, extra_sql_filter=""):
     """
@@ -117,7 +119,9 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     plt.tight_layout()
 
     # 8. 저장
-    output_dir = "docs/images" if os.getenv('GITHUB_ACTIONS') == 'true' else r"C:\Users\dkang\OneDrive\Desktop\D\tech-base\docs\images"
+    # Why: 예전에는 로컬 경로를 절대경로로 박아뒀는데, 폴더를 옮기면 조용히
+    #      엉뚱한 곳에 저장된다. 스크립트 위치에서 레포 루트를 찾아 쓴다.
+    output_dir = os.path.join(REPO_ROOT, "docs", "images")
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, filename)
     
@@ -126,24 +130,6 @@ def create_category_chart(client, category_sql_name, chart_title, filename, them
     print(f"✅ 개선된 듀얼 축 차트 생성: {output_path}")
 
 # run_analysis 내 targets는 이전과 동일하게 사용하면 됩니다.
-
-def update_markdown_timestamps(md_file_path):
-    try:
-        new_version = datetime.now().strftime("%Y%m%d%H%M")
-        with open(md_file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-            
-        new_content = re.sub(r'\.png\?v=[a-zA-Z0-9_]+', f'.png?v={new_version}', content)
-        
-        if content != new_content:
-            with open(md_file_path, 'w', encoding='utf-8') as f:
-                f.write(new_content)
-            print(f"✅ Cache busting tags updated in {md_file_path} to: ?v={new_version}")
-        else:
-            print(f"ℹ️ No timestamp tags found in {md_file_path} or already up to date.")
-            
-    except FileNotFoundError:
-        print(f"⚠️ Warning: Could not find markdown file at {md_file_path}. Check the path.")
 
 def run_analysis():
     client = bigquery.Client()
@@ -212,9 +198,6 @@ def run_analysis():
             theme_color=t['color'],
             extra_sql_filter=t.get('sql_filter', '')
         )
-    
-    print("Updating Markdown timestamps...")
-    update_markdown_timestamps("docs/projects/ca-pc-parts-tracker.md")
 
 if __name__ == "__main__":
     run_analysis()
