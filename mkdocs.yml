@@ -45,6 +45,8 @@ markdown_extensions:
   - pymdownx.details      # [필수] 접었다 폈다 하는 기능
   - pymdownx.arithmatex:  # [필수] 수식 기능 ($E=mc^2$)
       generic: true
+  - pymdownx.tabbed:      # [Journal] 한국어/English 탭 전환
+      alternate_style: true
 
 extra_javascript:
   - javascripts/mathjax.js
@@ -55,12 +57,25 @@ extra_javascript:
 extra_css:
   - stylesheets/extra.css
 
+# 사이트 빌드에서 제외 (파일은 저장소에 그대로 남음)
+# Why: nav에서 뺀 문서가 URL로는 계속 열리는 상황을 막기 위함
+exclude_docs: |
+  daily-table-topics-app/
+  aar/
+  taste/
+  journal/_template.md
+
+# nav에 없는 것이 의도된 경로 (--strict 빌드 경고 억제)
+# Why: journal의 월/일자 글은 nav 대신 index.md 링크로 탐색함
+not_in_nav: |
+  journal/
+
 nav:
   - Home: index.md
+  - Journal:
+      - Overview: journal/index.md
   - Canada PC Parts Tracker:
       - Intro: canada-pc-parts-tracker/ca-pc-parts-tracker.md   
-  - Daily Table Topics App:
-      - Intro: daily-table-topics-app/daily-table-topics-app.md
   - Finished Projects:
       - Canada IEC Monitor (2025-12): finished-projects/iec-monitor.md
   - Study:
@@ -73,9 +88,6 @@ nav:
       - Principal Component Analysis: study/pca.md
       - K - Means: study/k-means.md
       - Flash Cards: study/quiz/ml-quiz.md
-
-  - After Action Review (AAR):  
-      - 2026 Speech Contest: "aar/2026-01-21.md"
 
 extra:
   social:
