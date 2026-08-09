@@ -154,8 +154,13 @@ python -m mkdocs build --strict
   나중에 파일을 내려받아 레포에 저장하는 단계를 추가해야 한다.
 ## 자동 실행 (GitHub Actions)
 
-`.github/workflows/sync_journal.yml` 이 매일 1회(UTC 21:00) 돌고,
+`.github/workflows/sync_journal.yml` 이 매일 1회 **토론토 새벽 2시**에 돌고,
 Actions 탭에서 **Run workflow** 버튼으로 즉시 실행할 수도 있다.
+
+!!! note "서머타임"
+    cron은 UTC로만 동작하고 서머타임을 따라가지 않는다. `0 6 * * *`(UTC 06:00)로
+    두어 한 해의 대부분인 EDT 기간(3~11월)에 02:00이 되게 맞췄다.
+    EST 기간(겨울)에는 01:00에 돈다.
 
 **Notion이 변경을 밀어주는 방식이 아니라, 정해진 시각에 우리가 물어보는(polling)
 방식**이다. 글을 발행한 직후 바로 올리고 싶으면 수동 버튼을 쓴다.

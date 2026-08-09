@@ -2,8 +2,10 @@ name: Sync Journal from Notion
 
 on:
   schedule:
-    # UTC 21:00 = 캐나다 EDT 17:00 / EST 16:00 (매일 1회)
-    - cron: '0 21 * * *'
+    # 토론토 새벽 2시. cron은 UTC로만 돌고 서머타임을 따라가지 않으므로,
+    # 한 해의 대부분(EDT, 3~11월)이 02:00이 되도록 06:00 UTC로 맞춘다.
+    #   UTC 06:00 -> EDT 02:00 (여름) / EST 01:00 (겨울)
+    - cron: '0 6 * * *'
   workflow_dispatch: # 수동 실행 버튼
 
 # Why: 동시에 두 번 돌면 같은 파일을 두고 push가 충돌한다.
