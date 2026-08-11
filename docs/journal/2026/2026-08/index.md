@@ -11,6 +11,7 @@ title: "2026-08"
 ## 글 목록
 
 <!-- sync:auto:start -->
+- [2026-08-10](2026-08-10.md) — Genius Everywhere, Fool Anywhere
 - [2026-08-09](2026-08-09.md) — 점, 선, 면 - 존재와 관계의 기하학
 <!-- sync:auto:end -->
 
