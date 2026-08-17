@@ -59,16 +59,42 @@ Public에서 빠진 글은 삭제한다.
 
 \* `NOTION_DATABASE_ID` 와 `NOTION_DATA_SOURCE_ID` 중 하나만 있으면 된다.
 
-**권장: 레포 루트에 `.env` 파일**
+#### 권장 방법: 레포 루트에 `.env` 파일
+
+레포 루트에 `.env` 를 만들고 아래를 복사해 값을 채운다.
+스크립트가 실행할 때 자동으로 읽는다.
 
 ```bash
-cp .env.example .env
+# https://www.notion.so/my-integrations 에서 발급한 Internal integration secret
+NOTION_TOKEN=
+
+# Journal 데이터베이스 ID
+# 모르면 비워두고 아래 명령으로 찾을 수 있다:
+#   python tools/sync_journal.py --discover-from-page <노션 글 URL>
+NOTION_DATABASE_ID=
+
+# --- 아래는 전부 선택 사항 (기본값으로 동작) ---
+# NOTION_VERSION=2026-03-11
+# NOTION_DATA_SOURCE_ID=
+# NOTION_PROP_DATE=Date
+# NOTION_PROP_VISIBILITY=Visibility
+# NOTION_PROP_LANG=Lang original
+# NOTION_PUBLIC_VALUE=Public
 ```
 
-그 다음 `.env` 를 열어 값을 채운다. 스크립트가 자동으로 읽는다.
 `.env` 는 `.gitignore`에 등록되어 있어 커밋되지 않는다.
+값이 비어 있는 줄은 무시하므로, 선택 항목은 지우지 않고 그대로 둬도 된다.
 
-셸에 직접 넣어도 된다(이미 설정된 환경변수가 `.env`보다 우선한다).
+> [!CAUTION]
+> **example 파일을 만들지 말 것.**
+> 예전에는 `.env.example` 을 두고 복사해 쓰게 했는데, 그 파일은 **커밋 대상**이라
+> 실수로 실제 토큰을 적으면 그대로 저장소에 올라간다. 실제로 한 번 그럴 뻔했다.
+> 그래서 파일을 없애고 설정 예시는 이 문서에만 남겼다.
+> `.gitignore` 도 `.env*` 를 예외 없이 전부 막도록 되어 있다.
+
+#### 대안: 셸에 직접 넣기
+
+이미 설정된 환경변수가 `.env` 보다 우선한다.
 
 ```powershell
 $env:NOTION_TOKEN = "ntn_..."
@@ -152,15 +178,18 @@ python -m mkdocs build --strict
   그대로 넣으면 한 시간쯤 뒤에 깨진다. 지금은 본문에서 빼고
   `<!-- TODO: image 미동기화 -->` 주석만 남긴다.
   나중에 파일을 내려받아 레포에 저장하는 단계를 추가해야 한다.
-## 자동 실행 (GitHub Actions)
+
+---
+
+### 6. 자동 실행 (GitHub Actions)
 
 `.github/workflows/sync_journal.yml` 이 매일 1회 **토론토 새벽 2시**에 돌고,
 Actions 탭에서 **Run workflow** 버튼으로 즉시 실행할 수도 있다.
 
-!!! note "서머타임"
-    cron은 UTC로만 동작하고 서머타임을 따라가지 않는다. `0 6 * * *`(UTC 06:00)로
-    두어 한 해의 대부분인 EDT 기간(3~11월)에 02:00이 되게 맞췄다.
-    EST 기간(겨울)에는 01:00에 돈다.
+> [!NOTE]
+> **서머타임.** cron은 UTC로만 동작하고 서머타임을 따라가지 않는다.
+> `0 6 * * *`(UTC 06:00)로 두어 한 해의 대부분인 EDT 기간(3~11월)에
+> 02:00이 되게 맞췄다. EST 기간(겨울)에는 01:00에 돈다.
 
 **Notion이 변경을 밀어주는 방식이 아니라, 정해진 시각에 우리가 물어보는(polling)
 방식**이다. 글을 발행한 직후 바로 올리고 싶으면 수동 버튼을 쓴다.
@@ -173,17 +202,21 @@ Actions 탭에서 **Run workflow** 버튼으로 즉시 실행할 수도 있다.
 | `NOTION_TOKEN` | Notion integration secret |
 | `NOTION_DATABASE_ID` | Journal 데이터베이스 ID |
 
-변경이 없으면 커밋하지 않고 조용히 끝난다.
-변경이 있으면 `docs/journal` 만 커밋·push한 뒤 **같은 워크플로 안에서
-`mkdocs gh-deploy` 까지 실행**한다.
+변경이 없으면 커밋도 배포도 하지 않고 조용히 끝난다.
+변경이 있으면 `docs/journal` 만 커밋·push한 뒤,
+같은 실행 안에서 `deploy.yml` 을 호출해 사이트까지 배포한다.
 
-!!! warning "publish.yml 에 의존하지 않는 이유"
-    GitHub는 `GITHUB_TOKEN` 으로 만든 push 로는 다른 워크플로를 발동시키지
-    않는다(워크플로끼리 무한히 서로를 깨우는 것을 막는 정책). 따라서 이
-    워크플로가 커밋해도 `publish.yml` 은 깨어나지 않는다.
-    그래서 배포를 직접 수행한다. `update_data.yml` 도 같은 이유로 같은 구조다.
+```text
+sync (Notion 조회 → 파일 갱신 → 커밋/push)
+  └─ deploy  (변경이 있을 때만)
+       ├─ build   mkdocs build --strict
+       └─ deploy  actions/deploy-pages
+```
 
-    이때 `pages build and deployment` 를 수동으로 돌려도 소용이 없다.
-    그것은 `gh-pages` 브랜치에 **이미 올라간** 내용을 다시 게시할 뿐이라,
-    `mkdocs gh-deploy` 가 실행되지 않았다면 옛 사이트가 그대로 다시 올라간다.
-  자동화하려면 `NOTION_TOKEN` 을 repo secret으로 넣고 워크플로를 추가하면 된다.
+> [!WARNING]
+> **push 트리거에 기대지 않는 이유.**
+> GitHub는 `GITHUB_TOKEN` 으로 만든 push 로는 다른 워크플로를 발동시키지
+> 않는다(워크플로끼리 무한히 서로를 깨우는 것을 막는 정책).
+> 따라서 이 워크플로가 커밋해도 `deploy.yml` 의 push 트리거는 깨어나지 않는다.
+> 그래서 `workflow_call` 로 직접 호출한다.
+> `update_data.yml` 도 같은 이유로 같은 구조다.
