@@ -40,7 +40,7 @@ Write the translation here.
 4. 한쪽 언어만 쓸 거라면 탭을 만들지 말고 본문만 쓴다
    (빈 탭은 만들지 않는다)
 
-5. 그 달의 index.md 글 목록에 한 줄 추가
+5. 목록은 손대지 않아도 된다. tools/sync_journal.py 가 파일을 보고 다시 쓴다.
 
 주의
 - 이 파일(_template.md)은 mkdocs.yml의 exclude_docs 에 등록되어 있어

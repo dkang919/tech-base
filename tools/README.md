@@ -153,8 +153,9 @@ python -m mkdocs build --strict
 
 동기화가 끝나면 아래 두 곳의 목록을 다시 만든다.
 
-- `docs/journal/YYYY/YYYY-MM/index.md` 의 글 목록 (없으면 새로 만든다)
-- `docs/journal/index.md` 의 월별 보기 목록
+- `docs/journal/index.md` — 월별로 묶은 **글 목록 전체**.
+  일기를 고르는 게 목적이라 한 화면에서 바로 누를 수 있게 펼쳐 둔다.
+- `docs/journal/YYYY/YYYY-MM/index.md` — 그 달의 글 목록 (없으면 새로 만든다)
 
 **Notion 응답이 아니라 디스크의 파일을 기준으로** 만들기 때문에,
 손으로 쓴 글도 목록에 함께 들어간다.

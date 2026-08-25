@@ -504,19 +504,31 @@ def entry_title(path):
     return str(read_frontmatter(path).get("title") or path.stem)
 
 
+def month_label(ym):
+    """'2026-08' -> '2026년 8월'"""
+    y, m = ym.split("-")
+    return f"{y}년 {int(m)}월"
+
+
+def entry_line(path, href):
+    """
+    목록 한 줄. 날짜와 제목을 통째로 링크에 넣는다.
+
+    Why: 일기 목록은 훑어보는 게 전부라, 줄 전체가 눌리는 편이 편하다.
+         연도는 월 제목에 이미 있으므로 날짜는 MM-DD 만 남긴다.
+    """
+    return f"- [**{path.stem[5:]}** · {entry_title(path)}]({href})"
+
+
 MONTH_TEMPLATE = """---
 title: "__YM__"
 ---
 
-# __YM__
-
-[← Journal Overview](../../index.md)
-
----
-
-## 글 목록
+# __LABEL__
 
 __AUTO__
+
+[← 전체 목록](../../index.md)
 """
 
 OVERVIEW_MARKER_HINT = (
@@ -542,23 +554,26 @@ def rebuild_indexes(dry_run=False):
 
     for ym in sorted(months):
         entries = sorted(months[ym], key=lambda p: p.stem, reverse=True)
-        lines = [f"- [{p.stem}]({p.name}) — {entry_title(p)}" for p in entries]
+        lines = [entry_line(p, p.name) for p in entries]
         path = JOURNAL_DIR / ym[:4] / ym / "index.md"
-        r = replace_marked_region(
-            path, lines, MONTH_TEMPLATE.replace("__YM__", ym), dry_run
-        )
+        template = (MONTH_TEMPLATE
+                    .replace("__YM__", ym)
+                    .replace("__LABEL__", month_label(ym)))
+        r = replace_marked_region(path, lines, template, dry_run)
         if r:
             changed.append(path.relative_to(REPO_ROOT).as_posix())
 
-    # Overview의 연/월 목록
+    # Overview에는 월별로 묶은 글 목록 전체를 편다.
+    # Why: 일기가 목적이라 Overview -> 월 -> 글 로 두 번 타는 것보다
+    #      첫 화면에서 바로 고르는 편이 빠르다.
     overview = JOURNAL_DIR / "index.md"
     if overview.exists():
         lines = []
-        for year in sorted({ym[:4] for ym in months}, reverse=True):
-            lines.append(f"### {year}")
+        for ym in sorted(months, reverse=True):
+            lines.append(f"## {month_label(ym)}")
             lines.append("")
-            for ym in sorted([m for m in months if m.startswith(year)], reverse=True):
-                lines.append(f"- [{ym}]({year}/{ym}/index.md) — {len(months[ym])}편")
+            entries = sorted(months[ym], key=lambda p: p.stem, reverse=True)
+            lines += [entry_line(p, f"{ym[:4]}/{ym}/{p.name}") for p in entries]
             lines.append("")
         r = replace_marked_region(overview, lines[:-1] if lines else [], "", dry_run)
         if r is None:
