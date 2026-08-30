@@ -12,12 +12,14 @@ Public에서 빠진 글은 삭제한다(reconcile).
 """
 
 import argparse
+import mimetypes
 import os
 import re
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 import requests
 import yaml
@@ -32,6 +34,14 @@ API = "https://api.notion.com/v1"
 # Why: 2025-09-03에서 databases/query가 폐기되고 data_sources/query로 바뀌었다.
 #      이 스크립트는 data source 기반 API를 쓴다.
 DEFAULT_NOTION_VERSION = "2026-03-11"
+
+# 이미지 저장 규칙
+# Why: Notion이 주는 파일 URL은 한 시간쯤 뒤 만료되는 서명 링크라 그대로 쓸 수 없다.
+#      받아서 레포에 넣고, 파일명은 블록 ID에서 만들어 실행할 때마다 같게 유지한다.
+IMG_DIR_NAME = "images"
+MAX_IMAGE_BYTES = 25 * 1024 * 1024
+# 동기화가 만든 파일만 정리 대상으로 삼기 위한 패턴 (손으로 넣은 이미지는 보호)
+SYNCED_IMG_RE = re.compile(r"^[0-9a-f]{12}\.[A-Za-z0-9]+$")
 
 
 def load_dotenv():
@@ -234,6 +244,74 @@ def rich_text_to_md(rich):
     return "".join(out)
 
 
+def block_file_url(data):
+    """image/file 블록에서 실제 URL을 꺼낸다. Notion 호스팅과 외부 링크 둘 다 지원."""
+    for key in ("file", "external", "file_upload"):
+        v = data.get(key)
+        if isinstance(v, dict) and v.get("url"):
+            return v["url"]
+    return None
+
+
+def image_filename(block_id, url, content_type=""):
+    """
+    블록 ID로 파일명을 만든다.
+
+    Why: Notion URL은 실행할 때마다 서명이 바뀌므로 이름의 근거로 쓸 수 없다.
+         블록 ID는 고정이라 같은 이미지가 항상 같은 파일로 떨어지고,
+         덕분에 재실행해도 diff가 생기지 않는다.
+    """
+    stem = block_id.replace("-", "")[:12].lower()
+    ext = os.path.splitext(unquote(urlparse(url).path))[1].lower()
+    if not re.fullmatch(r"\.[a-z0-9]{2,5}", ext):
+        ext = mimetypes.guess_extension(content_type.split(";")[0].strip()) or ".png"
+    if ext == ".jpe":
+        ext = ".jpg"
+    return f"{stem}{ext}"
+
+
+class ImageContext:
+    """한 글을 변환하는 동안의 이미지 저장 위치와 결과를 담는다."""
+
+    def __init__(self, img_dir, dry_run):
+        self.img_dir = img_dir
+        self.dry_run = dry_run
+        self.saved = set()      # 이 글이 실제로 참조하는 파일명
+        self.written = []       # 실제로 새로 쓴 파일 (보고용)
+        self.session = requests.Session()
+
+    def fetch(self, block_id, url):
+        """이미지를 내려받아 저장하고 파일명을 돌려준다. 실패하면 None."""
+        try:
+            r = self.session.get(url, timeout=60, stream=True)
+            r.raise_for_status()
+            size = int(r.headers.get("Content-Length") or 0)
+            if size > MAX_IMAGE_BYTES:
+                print(f"  ! 이미지가 너무 큼({size // 1024 // 1024}MB), 건너뜀: {block_id}")
+                return None
+            body = b""
+            for chunk in r.iter_content(65536):
+                body += chunk
+                if len(body) > MAX_IMAGE_BYTES:
+                    print(f"  ! 이미지가 너무 큼, 건너뜀: {block_id}")
+                    return None
+            name = image_filename(block_id, url, r.headers.get("Content-Type", ""))
+        except requests.RequestException as e:
+            print(f"  ! 이미지 내려받기 실패({block_id}): {e}")
+            return None
+
+        self.saved.add(name)
+        dest = self.img_dir / name
+        # How: 내용이 같으면 쓰지 않는다. 매번 새로 써서 불필요한 커밋이 생기는 것을 막는다.
+        if dest.exists() and dest.read_bytes() == body:
+            return name
+        self.written.append(dest)
+        if not self.dry_run:
+            self.img_dir.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(body)
+        return name
+
+
 LIST_TYPES = ("bulleted_list_item", "numbered_list_item", "to_do")
 
 
@@ -255,7 +333,7 @@ def soft_breaks(text, pad="", inline=False):
     return f"<br>\n{pad}".join(parts)
 
 
-def blocks_to_md(nc, block_id, depth=0):
+def blocks_to_md(nc, block_id, depth=0, imgctx=None):
     """
     블록 트리를 재귀적으로 마크다운으로 변환한다.
 
@@ -311,10 +389,22 @@ def blocks_to_md(nc, block_id, depth=0):
         elif t == "toggle":
             chunk.append(f'??? note "{text}"')
             kids = depth + 1
-        elif t in ("image", "video", "file", "pdf"):
-            # TODO: 이미지 다운로드는 다음 단계. Notion의 file URL은 서명된
-            #       임시 링크라 그대로 박으면 한 시간쯤 뒤에 깨진다.
-            #       지금은 본문에서 빼고 흔적만 남긴다.
+        elif t == "image":
+            cap = rich_text_to_md(data.get("caption")).strip()
+            url = block_file_url(data)
+            name = imgctx.fetch(b["id"], url) if (imgctx and url) else None
+            if name:
+                # 캡션이 있으면 alt로 쓰고 그림 아래에도 보이게 남긴다
+                chunk.append(f"{pad}![{cap}]({IMG_DIR_NAME}/{name})")
+                if cap:
+                    chunk.append(f"{pad}/// caption")
+                    chunk.append(f"{pad}{cap}")
+                    chunk.append(f"{pad}///")
+            else:
+                chunk.append(f"{pad}<!-- 이미지를 가져오지 못했습니다 ({cap or b['id']}) -->")
+        elif t in ("video", "file", "pdf"):
+            # 이미지 외 첨부는 아직 다루지 않는다. Notion URL이 만료되므로
+            # 링크를 남겨도 곧 깨져서, 흔적만 주석으로 둔다.
             cap = rich_text_to_md(data.get("caption")) or t
             chunk.append(f"{pad}<!-- TODO: {t} 미동기화 ({cap}) -->")
         elif t in ("bookmark", "embed", "link_preview"):
@@ -335,7 +425,7 @@ def blocks_to_md(nc, block_id, depth=0):
             prev = t
 
         if b.get("has_children") and kids is not None:
-            child = blocks_to_md(nc, b["id"], kids)
+            child = blocks_to_md(nc, b["id"], kids, imgctx)
             if child:
                 # 리스트 항목의 하위 블록은 부모에 바로 붙여야 중첩이 유지된다
                 if t not in LIST_TYPES and lines:
@@ -627,17 +717,23 @@ def sync(dry_run=False):
     print(f"  {PROP_VISIBILITY}={PUBLIC_VALUE} 페이지: {len(pages)}건")
 
     seen, created, updated, unchanged = set(), [], [], []
-    expected = {}   # notion_id -> 이 글이 있어야 할 경로
+    expected = {}       # notion_id -> 이 글이 있어야 할 경로
+    used_images = {}    # 이미지 폴더 -> 지금도 쓰이는 파일명 집합
+    images = []         # 새로 받았거나 내용이 바뀐 이미지
     for page in pages:
         meta = extract_meta(page)
         nid = normalize_id(meta["notion_id"])
         seen.add(nid)
         expected[nid] = target_path(meta["date"])
 
-        ko, en = split_sections(blocks_to_md(nc, page["id"]))
-        content = render_markdown(meta, ko, en)
-
         path = target_path(meta["date"])
+        imgctx = ImageContext(path.parent / IMG_DIR_NAME, dry_run)
+        ko, en = split_sections(blocks_to_md(nc, page["id"], imgctx=imgctx))
+        content = render_markdown(meta, ko, en)
+        for name in imgctx.saved:
+            used_images.setdefault(imgctx.img_dir, set()).add(name)
+        images += [p.relative_to(REPO_ROOT).as_posix() for p in imgctx.written]
+
         rel = path.relative_to(REPO_ROOT).as_posix()
         old = path.read_text(encoding="utf-8") if path.exists() else None
 
@@ -672,19 +768,39 @@ def sync(dry_run=False):
         if not dry_run:
             path.unlink()
 
+    # 더 이상 쓰이지 않는 이미지 정리
+    # Why: 글에서 사진을 빼거나 글이 Private으로 바뀌면 파일만 레포에 남는다.
+    # How: 동기화가 만든 이름 규칙에 맞는 파일만 지운다. 손으로 넣은 이미지는 건드리지 않는다.
+    img_dirs = set(used_images) | {d for d in JOURNAL_DIR.rglob(IMG_DIR_NAME) if d.is_dir()}
+    for img_dir in sorted(img_dirs):
+        if not img_dir.exists():
+            continue
+        keep = used_images.get(img_dir, set())
+        for f in sorted(img_dir.iterdir()):
+            if not f.is_file() or f.name in keep:
+                continue
+            if not SYNCED_IMG_RE.match(f.name):
+                continue    # 사람이 넣은 파일
+            removed.append(f"{f.relative_to(REPO_ROOT).as_posix()}  (미사용 이미지)")
+            if not dry_run:
+                f.unlink()
+        if not dry_run and not any(img_dir.iterdir()):
+            img_dir.rmdir()
+
     # 글이 확정된 뒤에 인덱스를 다시 만든다(삭제분까지 반영되도록)
     indexes = rebuild_indexes(dry_run)
 
     tag = "[dry-run] " if dry_run else ""
     for label, items in (
         ("created", created), ("updated", updated),
-        ("removed", removed), ("index 갱신", indexes), ("unchanged", unchanged),
+        ("removed", removed), ("image 저장", images),
+        ("index 갱신", indexes), ("unchanged", unchanged),
     ):
         if items:
             print(f"  {tag}{label} {len(items)}건")
             for i in items:
                 print(f"    - {i}")
-    if not (created or updated or removed or indexes):
+    if not (created or updated or removed or images or indexes):
         print(f"  {tag}변경 없음")
     return 0
 

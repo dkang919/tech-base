@@ -35,6 +35,7 @@ markdown_extensions:
   - pymdownx.details      # [필수] 접었다 폈다 하는 기능
   - pymdownx.arithmatex:  # [필수] 수식 기능 ($E=mc^2$)
       generic: true
+  - pymdownx.blocks.caption:  # [Journal] 사진 설명을 <figcaption>으로
   - pymdownx.blocks.tab:  # [Journal] 한국어/English 탭 전환
       # Why: 구 문법(=== "제목")은 본문을 4칸 들여써야 해서 동기화 스크립트가
       #      생성하기 번거롭다. blocks.tab은 들여쓰기가 필요 없다.
